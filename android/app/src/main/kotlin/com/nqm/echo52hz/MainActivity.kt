@@ -1,4 +1,4 @@
-package com.example.echo_52hz
+package com.nqm.echo52hz
 
 import io.flutter.embedding.android.FlutterActivity
 
