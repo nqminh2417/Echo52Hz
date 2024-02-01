@@ -44,11 +44,34 @@ class _LoginScreenState extends State<LoginScreen> {
           children: [
             TextField(
               controller: _emailController,
-              decoration: const InputDecoration(hintText: 'Enter your email'),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Enter your email',
+                isDense: true,
+                prefixIcon: const Icon(Icons.email),
+              ),
+            ),
+            const SizedBox(
+              height: 10,
             ),
             TextField(
               controller: _passwordController,
-              decoration: const InputDecoration(hintText: 'Enter your password'),
+              decoration: InputDecoration(
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(6),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.white,
+                hintText: 'Enter your password',
+                isDense: true,
+                prefixIcon: const Icon(Icons.lock),
+              ),
             ),
             const SizedBox(
               height: 50,
@@ -56,7 +79,7 @@ class _LoginScreenState extends State<LoginScreen> {
             ElevatedButton(
               onPressed: _login,
               child: const Text('Sign in'),
-            )
+            ),
           ],
         ),
       ]),

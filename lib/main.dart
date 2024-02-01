@@ -1,3 +1,4 @@
+import 'package:echo_52hz/features/Test/test_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -24,9 +25,10 @@ class MainApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      initialRoute: '/',
+      initialRoute: 'test',
       routes: {
         '/': (context) => const LoginScreen(),
+        'test': (context) => const TestScreen(),
       },
     );
   }
