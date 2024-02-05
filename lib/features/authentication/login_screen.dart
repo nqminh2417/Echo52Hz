@@ -23,11 +23,13 @@ class _LoginScreenState extends State<LoginScreen> {
       const email = 'minh@gmail.com';
       const password = '123456';
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
-      Navigator.of(context).pushReplacement(
-        MaterialPageRoute(builder: (context) => const HomeScreen()),
-      );
+      if (mounted) {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
     } on FirebaseAuthException catch (e) {
-      print(e.message);
+      debugPrint(e.message);
     }
   }
 
@@ -42,13 +44,15 @@ class _LoginScreenState extends State<LoginScreen> {
           height: double.infinity,
         ),
         Positioned(
-          top: MediaQuery.of(context).size.height / 2,
+          top: (emailFocusNode.hasFocus || passwordFocusNode.hasFocus)
+              ? MediaQuery.of(context).size.height / 3
+              : MediaQuery.of(context).size.height / 2,
           left: 0,
           right: 0,
-          height: MediaQuery.of(context).size.height * 1 / 3,
+          // height: MediaQuery.of(context).size.height * 1 / 3,
           child: Card(
             color: Colors.transparent,
-            shadowColor: Colors.transparent,
+            // shadowColor: Colors.transparent,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -86,13 +90,14 @@ class _LoginScreenState extends State<LoginScreen> {
                               borderSide: BorderSide.none,
                             ),
                             filled: true,
-                            fillColor: Colors.white,
+                            fillColor: const Color(0xfff8fafc),
                             hintText: 'Enter your email',
                             hintStyle: const TextStyle(color: Color(0xff94a3b8)),
                             isDense: true,
                             prefixIcon: const Icon(Icons.email),
                           ),
                           focusNode: emailFocusNode,
+                          textInputAction: TextInputAction.next,
                         ),
                       );
                     },
@@ -105,7 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     builder: (context, child) {
                       return Container(
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          color: const Color(0xfff8fafc),
                           borderRadius: BorderRadius.circular(10.0),
                           boxShadow: passwordFocusNode.hasFocus
                               ? [
@@ -139,6 +144,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: const Icon(Icons.lock),
                           ),
                           focusNode: passwordFocusNode,
+                          textInputAction: TextInputAction.done,
                         ),
                       );
                     },
