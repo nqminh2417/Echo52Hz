@@ -15,6 +15,21 @@ class _LoginScreenState extends State<LoginScreen> {
   final _passwordController = TextEditingController();
   final emailFocusNode = FocusNode();
   final passwordFocusNode = FocusNode();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  @override
+  void initState() {
+    super.initState();
+    _auth.authStateChanges().listen((User? user) {
+      if (user != null) {
+        // User is logged in, navigate to Home
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => const HomeScreen()),
+        );
+      }
+    });
+  }
 
   void _login() async {
     try {
@@ -24,12 +39,17 @@ class _LoginScreenState extends State<LoginScreen> {
       const password = '123456';
       await FirebaseAuth.instance.signInWithEmailAndPassword(email: email, password: password);
       if (mounted) {
-        Navigator.of(context).pushReplacement(
+        // Navigator.of(context).pushReplacement(
+        //   MaterialPageRoute(builder: (context) => const HomeScreen()),
+        // );
+        Navigator.pushAndRemoveUntil(
+          context,
           MaterialPageRoute(builder: (context) => const HomeScreen()),
+          ModalRoute.withName('/home'), // Remove screens until reaching login route
         );
       }
     } on FirebaseAuthException catch (e) {
-      debugPrint(e.message);
+      debugPrint("eror: ${e.message}");
     }
   }
 

@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../Test/test_screen.dart';
 import '../authentication/login_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -14,7 +15,7 @@ class _HomeScreenState extends State<HomeScreen> {
   Future<void> _logout() async {
     await FirebaseAuth.instance.signOut();
     if (mounted) {
-      Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+      Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
     }
   }
 
@@ -33,6 +34,15 @@ class _HomeScreenState extends State<HomeScreen> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text('Welcome to the Home Screen!'),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const TestScreen()),
+                );
+              },
+              child: const Text('Go to Test Screen'),
+            ),
             ElevatedButton(
               onPressed: _logout,
               child: const Text('Logout'),
