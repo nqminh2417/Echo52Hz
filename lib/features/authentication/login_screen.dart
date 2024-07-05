@@ -17,6 +17,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordFocusNode = FocusNode();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  double keyboardHeight = 0.0;
+
   @override
   void initState() {
     super.initState();
@@ -55,6 +57,16 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Calculate the height of the keyboard
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    if (bottomInset > 0) {
+      keyboardHeight = bottomInset;
+    } else {
+      keyboardHeight = 0.0;
+    }
+    final screenHeight = MediaQuery.of(context).size.height;
+    final height = screenHeight - keyboardHeight;
+
     return Scaffold(
       body: Stack(children: [
         Image.asset(
@@ -64,15 +76,11 @@ class _LoginScreenState extends State<LoginScreen> {
           height: double.infinity,
         ),
         Positioned(
-          top: (emailFocusNode.hasFocus || passwordFocusNode.hasFocus)
-              ? MediaQuery.of(context).size.height / 3
-              : MediaQuery.of(context).size.height / 2,
+          top: (keyboardHeight > 0) ? height / 2 : MediaQuery.of(context).size.height / 2,
           left: 0,
           right: 0,
-          // height: MediaQuery.of(context).size.height * 1 / 3,
           child: Card(
             color: Colors.transparent,
-            // shadowColor: Colors.transparent,
             child: Padding(
               padding: const EdgeInsets.all(16),
               child: Column(
@@ -169,17 +177,22 @@ class _LoginScreenState extends State<LoginScreen> {
                       );
                     },
                   ),
-                  // const Expanded(
-                  //   child: SizedBox(
-                  //     height: 50,
-                  //   ),
-                  // ),
                   const SizedBox(
-                    height: 50,
+                    height: 20,
                   ),
                   ElevatedButton(
                     onPressed: _login,
                     child: const Text('Sign in'),
+                  ),
+                  const SizedBox(height: 20),
+                  Text(
+                    'Keyboard Height: $keyboardHeight',
+                    style: const TextStyle(color: Colors.amber),
+                  ),
+                  const SizedBox(height: 10),
+                  Text(
+                    'Screen Height: $height',
+                    style: const TextStyle(color: Colors.amber),
                   ),
                 ],
               ),
