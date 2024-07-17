@@ -1,5 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:diacritic/diacritic.dart';
 
 import '../home/home_screen.dart';
 
@@ -31,6 +33,15 @@ class _LoginScreenState extends State<LoginScreen> {
         );
       }
     });
+  }
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    _passwordController.dispose();
+    emailFocusNode.dispose();
+    passwordFocusNode.dispose();
+    super.dispose();
   }
 
   void _login() async {
@@ -76,7 +87,7 @@ class _LoginScreenState extends State<LoginScreen> {
           height: double.infinity,
         ),
         Positioned(
-          top: (keyboardHeight > 0) ? height / 2 : MediaQuery.of(context).size.height / 2,
+          top: (keyboardHeight > 0) ? height / 2 : screenHeight / 2,
           left: 0,
           right: 0,
           child: Card(
@@ -172,6 +183,10 @@ class _LoginScreenState extends State<LoginScreen> {
                             prefixIcon: const Icon(Icons.lock),
                           ),
                           focusNode: passwordFocusNode,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.deny(' '), // deny spaces
+                          ],
+                          onChanged: (value) => _passwordController.text = removeDiacritics(value),
                           textInputAction: TextInputAction.done,
                         ),
                       );
@@ -184,16 +199,16 @@ class _LoginScreenState extends State<LoginScreen> {
                     onPressed: _login,
                     child: const Text('Sign in'),
                   ),
-                  const SizedBox(height: 20),
-                  Text(
-                    'Keyboard Height: $keyboardHeight',
-                    style: const TextStyle(color: Colors.amber),
-                  ),
-                  const SizedBox(height: 10),
-                  Text(
-                    'Screen Height: $height',
-                    style: const TextStyle(color: Colors.amber),
-                  ),
+                  // const SizedBox(height: 20),
+                  // Text(
+                  //   'Keyboard Height: $keyboardHeight',
+                  //   style: const TextStyle(color: Colors.amber),
+                  // ),
+                  // const SizedBox(height: 10),
+                  // Text(
+                  //   'Screen Height: $height',
+                  //   style: const TextStyle(color: Colors.amber),
+                  // ),
                 ],
               ),
             ),
