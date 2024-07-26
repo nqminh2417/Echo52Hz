@@ -1,7 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:diacritic/diacritic.dart';
 
 import '../home/home_screen.dart';
 
@@ -19,7 +18,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordFocusNode = FocusNode();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  double keyboardHeight = 0.0;
+  double _keyboardHeight = 0.0;
+  bool _obscureText = true;
 
   @override
   void initState() {
@@ -42,6 +42,14 @@ class _LoginScreenState extends State<LoginScreen> {
     emailFocusNode.dispose();
     passwordFocusNode.dispose();
     super.dispose();
+  }
+
+  // Function to calculate the height of the keyboard
+  void _calculateKeyboardHeight() {
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+    setState(() {
+      _keyboardHeight = bottomInset > 0 ? bottomInset : 0.0;
+    });
   }
 
   void _login() async {
@@ -68,15 +76,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Calculate the height of the keyboard
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    if (bottomInset > 0) {
-      keyboardHeight = bottomInset;
-    } else {
-      keyboardHeight = 0.0;
-    }
+    _calculateKeyboardHeight();
     final screenHeight = MediaQuery.of(context).size.height;
-    final height = screenHeight - keyboardHeight;
+    final height = screenHeight - _keyboardHeight;
 
     return Scaffold(
       body: Stack(children: [
@@ -87,7 +89,7 @@ class _LoginScreenState extends State<LoginScreen> {
           height: double.infinity,
         ),
         Positioned(
-          top: (keyboardHeight > 0) ? height / 2 : screenHeight / 2,
+          top: (_keyboardHeight > 0) ? height / 2 : screenHeight / 2,
           left: 0,
           right: 0,
           child: Card(
@@ -122,6 +124,10 @@ class _LoginScreenState extends State<LoginScreen> {
                               : null,
                         ),
                         child: TextField(
+                          // This property controls whether the text input should be automatically corrected. Setting it to false disables automatic corrections.
+                          autocorrect: false,
+                          // This property controls autofill behavior. Setting it to null disables autofill.
+                          autofillHints: null,
                           controller: _emailController,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(
@@ -135,7 +141,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             isDense: true,
                             prefixIcon: const Icon(Icons.email),
                           ),
+                          // This property controls whether the keyboard should display suggestions. Setting it to false disables suggestions.
+                          enableSuggestions: false,
                           focusNode: emailFocusNode,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.deny(' '), // deny spaces for password
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[\x20-\x7E]'),
+                            ),
+                          ],
+                          keyboardType: TextInputType.text,
                           textInputAction: TextInputAction.next,
                         ),
                       );
@@ -169,24 +184,37 @@ class _LoginScreenState extends State<LoginScreen> {
                               : null,
                         ),
                         child: TextField(
+                          autocorrect: false,
                           controller: _passwordController,
                           decoration: InputDecoration(
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(10),
-                              borderSide: BorderSide.none,
-                            ),
-                            filled: true,
-                            fillColor: Colors.white,
-                            hintText: 'Enter your password',
-                            hintStyle: const TextStyle(color: Color(0xff94a3b8)),
-                            isDense: true,
-                            prefixIcon: const Icon(Icons.lock),
-                          ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                                borderSide: BorderSide.none,
+                              ),
+                              filled: true,
+                              fillColor: Colors.white,
+                              hintText: 'Enter your password',
+                              hintStyle: const TextStyle(color: Color(0xff94a3b8)),
+                              isDense: true,
+                              prefixIcon: const Icon(Icons.lock),
+                              suffixIcon: IconButton(
+                                icon: Icon(_obscureText ? Icons.visibility_off : Icons.visibility),
+                                onPressed: () {
+                                  setState(() {
+                                    _obscureText = !_obscureText;
+                                  });
+                                },
+                              )),
+                          enableSuggestions: false,
                           focusNode: passwordFocusNode,
                           inputFormatters: [
-                            FilteringTextInputFormatter.deny(' '), // deny spaces
+                            FilteringTextInputFormatter.deny(' '), // deny spaces for password
+                            FilteringTextInputFormatter.allow(
+                              RegExp(r'[\x20-\x7E]'),
+                            ),
                           ],
-                          onChanged: (value) => _passwordController.text = removeDiacritics(value),
+                          keyboardType: TextInputType.text,
+                          obscureText: _obscureText,
                           textInputAction: TextInputAction.done,
                         ),
                       );

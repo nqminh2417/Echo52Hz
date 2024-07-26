@@ -1,9 +1,7 @@
-import 'package:echo_52hz/features/Test/test_screen.dart';
+import 'package:echo_52hz/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
-import 'features/authentication/login_screen.dart';
-import 'features/home/home_screen.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
@@ -27,11 +25,7 @@ class MainApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       initialRoute: '/',
-      routes: {
-        '/': (context) => const LoginScreen(),
-        'home': (context) => const HomeScreen(),
-        'test': (context) => const TestScreen(),
-      },
+      routes: appRoutes,
     );
   }
 }
