@@ -14,6 +14,7 @@ dependencies:
   flutter:
     sdk: flutter
   fluttertoast: ^8.2.4
+  mongo_dart: ^0.10.3
 
 dev_dependencies:
   flutter_test:

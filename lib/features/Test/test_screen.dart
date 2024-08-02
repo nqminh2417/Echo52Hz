@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../services/mongodb_service.dart';
+
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
 
@@ -8,40 +10,30 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
-  // String keyboardStatus = 'OFF';
-
-  String keyboardStatus = 'OFF';
-  late final AnimationController _controller = AnimationController(
-    duration: const Duration(milliseconds: 10000), // Adjust animation duration as needed
-    vsync: this, // Pass the TickerProvider
-  );
-
-  void updateKeyboardStatus() {
-    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
-    keyboardStatus = bottomInset > 0 ? 'ON' : 'OFF';
-    _controller.forward(); // Start the animation
-  }
+  List<Map<String, dynamic>> users = [];
 
   @override
   void initState() {
     super.initState();
-    // Listen for keyboard changes and update state
-    WidgetsBinding.instance.addPostFrameCallback((_) => updateKeyboardStatus());
+    _fetchData();
   }
 
-  @override
-  void dispose() {
-    _controller.dispose(); // Dispose of the animation controller
-    super.dispose();
+  Future<void> _fetchData() async {
+    try {
+      final fetchedUsers = await MongoDBService.getData('user_authentication_db', 'users');
+      setState(() {
+        users = fetchedUsers;
+      });
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      print(e);
+    } finally {
+      await MongoDBService.close('user_authentication_db');
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    // final bottomInset = MediaQuery.of(context).viewInsets.bottom; // Get keyboard height
-    // keyboardStatus = bottomInset > 0 ? 'ON' : 'OFF'; // Update text value
-
-    updateKeyboardStatus();
-
     return Scaffold(
       appBar: AppBar(
         // automaticallyImplyLeading: false,
@@ -50,27 +42,15 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
           'Test Screen',
         ),
       ),
-      body: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) => Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Keyboard Status: $keyboardStatus'),
-            TextField(
-              decoration: InputDecoration(
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(6),
-                  borderSide: BorderSide.none,
-                ),
-                filled: true,
-                fillColor: Colors.white,
-                hintText: 'Enter your email',
-                isDense: true,
-                prefixIcon: const Icon(Icons.email),
-              ),
-            ),
-          ],
-        ),
+      body: ListView.builder(
+        itemCount: users.length,
+        itemBuilder: (context, index) {
+          final user = users[index];
+          return ListTile(
+            title: Text(user['name']),
+            subtitle: Text(user['email']),
+          );
+        },
       ),
     );
   }
