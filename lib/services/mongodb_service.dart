@@ -15,18 +15,25 @@ class MongoDBService {
     _dbs[databaseName] = db;
   }
 
+  static Future<void> close(String databaseName) async {
+    if (_dbs.containsKey(databaseName)) {
+      await _dbs[databaseName]!.close();
+      _dbs.remove(databaseName);
+    }
+  }
+
+  static Future<List<String>> getCollectionNames(String databaseName) async {
+    await connect(databaseName);
+    final db = _dbs[databaseName]!;
+    final collectionNames = await db.getCollectionNames();
+    return [];
+  }
+
   static Future<List<Map<String, dynamic>>> getData(String databaseName, String collectionName) async {
     await connect(databaseName);
     final db = _dbs[databaseName]!;
     final coll = db.collection(collectionName);
     final results = await coll.find().toList();
     return results;
-  }
-
-  static Future<void> close(String databaseName) async {
-    if (_dbs.containsKey(databaseName)) {
-      await _dbs[databaseName]!.close();
-      _dbs.remove(databaseName);
-    }
   }
 }

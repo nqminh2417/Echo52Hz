@@ -16,11 +16,26 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _fetchData();
+    _fetchData2();
+  }
+
+  Future<void> _fetchData2() async {
+    try {
+      final fetchedUsers = await MongoDBService.getCollectionNames('core_db');
+      // setState(() {
+      //   users = fetchedUsers;
+      // });
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      print(e);
+    } finally {
+      await MongoDBService.close('core_db');
+    }
   }
 
   Future<void> _fetchData() async {
     try {
-      final fetchedUsers = await MongoDBService.getData('user_authentication_db', 'users');
+      final fetchedUsers = await MongoDBService.getData('core_db', 'users');
       setState(() {
         users = fetchedUsers;
       });
@@ -28,7 +43,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       // Handle errors, e.g., show an error message
       print(e);
     } finally {
-      await MongoDBService.close('user_authentication_db');
+      await MongoDBService.close('core_db');
     }
   }
 
@@ -46,9 +61,18 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
         itemCount: users.length,
         itemBuilder: (context, index) {
           final user = users[index];
-          return ListTile(
-            title: Text(user['name']),
-            subtitle: Text(user['email']),
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ListTile(
+                title: Text(user['dsp_nm']),
+                subtitle: Text(user['email']),
+              ),
+              ListTile(
+                title: Text(user['dsp_nm']),
+                subtitle: Text(user['email']),
+              ),
+            ],
           );
         },
       ),
