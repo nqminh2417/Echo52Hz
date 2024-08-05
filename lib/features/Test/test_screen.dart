@@ -1,3 +1,4 @@
+import 'package:echo_52hz/helpers/password_hasher.dart';
 import 'package:flutter/material.dart';
 
 import '../../services/mongodb_service.dart';
@@ -16,8 +17,23 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _fetchData();
-    _fetchData2();
+    // _fetchData();
+    // _fetchData2();
+    _fetchData3();
+  }
+
+  Future<void> _fetchData() async {
+    try {
+      final fetchedUsers = await MongoDBService.getData('core_db', 'users');
+      setState(() {
+        users = fetchedUsers;
+      });
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      print(e);
+    } finally {
+      await MongoDBService.close('core_db');
+    }
   }
 
   Future<void> _fetchData2() async {
@@ -34,17 +50,22 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     }
   }
 
-  Future<void> _fetchData() async {
+  Future<void> _fetchData3() async {
     try {
-      final fetchedUsers = await MongoDBService.getData('core_db', 'users');
-      setState(() {
-        users = fetchedUsers;
-      });
+      // Hash the password
+      final hashedPassword = await PasswordHasher.hashPassword("zxc.123456");
+      print('Hashed Password: $hashedPassword');
+      // Verify the password
+      final isPasswordValid = PasswordHasher.verifyPassword("zxc.123456", hashedPassword);
+      print('Password Valid: $isPasswordValid');
+      // Verify a wrong password
+      final isWrongPasswordValid = PasswordHasher.verifyPassword('wrongpassword', hashedPassword);
+      print('Wrong Password Valid: $isWrongPasswordValid');
     } catch (e) {
       // Handle errors, e.g., show an error message
       print(e);
     } finally {
-      await MongoDBService.close('core_db');
+      // await MongoDBService.close('core_db');
     }
   }
 
