@@ -11,6 +11,7 @@ class TestScreen extends StatefulWidget {
 
 class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   List<Map<String, dynamic>> users = [];
+  List<String?> collNames = [];
 
   @override
   void initState() {
@@ -21,10 +22,10 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   Future<void> _fetchData2() async {
     try {
-      final fetchedUsers = await MongoDBService.getCollectionNames('core_db');
-      // setState(() {
-      //   users = fetchedUsers;
-      // });
+      final fetchedCollNames = await MongoDBService.getCollectionNames('core_db');
+      setState(() {
+        collNames = fetchedCollNames;
+      });
     } catch (e) {
       // Handle errors, e.g., show an error message
       print(e);

@@ -31,8 +31,13 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       body: Center(
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const ListTile(
+              leading: Text('1'),
+              title: Text('Go to eIS'),
+              trailing: Icon(Icons.access_time),
+            ),
             const Text('Welcome to the Home Screen!'),
             ElevatedButton(
               onPressed: () {

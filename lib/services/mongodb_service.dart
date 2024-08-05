@@ -22,11 +22,36 @@ class MongoDBService {
     }
   }
 
-  static Future<List<String>> getCollectionNames(String databaseName) async {
+  static Future<List<String?>> getCollectionNames(String databaseName) async {
     await connect(databaseName);
     final db = _dbs[databaseName]!;
     final collectionNames = await db.getCollectionNames();
-    return [];
+    return collectionNames;
+  }
+
+  static Future<Map<String, dynamic>?> loginUser(String databaseName, String credential, String password) async {
+    await connect(databaseName);
+    final db = _dbs[databaseName]!;
+    final usersCollection = db.collection('users');
+
+    // Define potential search fields
+    final searchFields = ['usrnm', 'email', 'phone', 'usr_id'];
+
+    for (final field in searchFields) {
+      final user = await usersCollection.findOne({field: credential});
+      if (user != null) {
+        // Verify password
+        if (user['password_hash'] == hashPassword(password)) {
+          // Replace with actual password hashing logic
+          return user;
+        } else {
+          // Incorrect password
+          return null;
+        }
+      }
+    }
+
+    return null; // User not found
   }
 
   static Future<List<Map<String, dynamic>>> getData(String databaseName, String collectionName) async {
