@@ -1,6 +1,6 @@
-import 'package:echo_52hz/helpers/password_hasher.dart';
 import 'package:flutter/material.dart';
 
+import '../../helpers/password_hasher.dart';
 import '../../services/mongodb_service.dart';
 
 class TestScreen extends StatefulWidget {
@@ -19,7 +19,8 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     super.initState();
     // _fetchData();
     // _fetchData2();
-    _fetchData3();
+    // _fetchData3();
+    _fetchData4();
   }
 
   Future<void> _fetchData() async {
@@ -61,6 +62,19 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       // Verify a wrong password
       final isWrongPasswordValid = PasswordHasher.verifyPassword('wrongpassword', hashedPassword);
       print('Wrong Password Valid: $isWrongPasswordValid');
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      print(e);
+    } finally {
+      // await MongoDBService.close('core_db');
+    }
+  }
+
+  Future<void> _fetchData4() async {
+    try {
+      final aaa = await MongoDBService.loginUser('core_db', 'un123', 'zxc.123456');
+      print("4444");
+      print(aaa);
     } catch (e) {
       // Handle errors, e.g., show an error message
       print(e);

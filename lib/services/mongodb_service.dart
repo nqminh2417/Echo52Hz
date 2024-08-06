@@ -1,4 +1,5 @@
 import 'package:mongo_dart/mongo_dart.dart';
+import '../../helpers/password_hasher.dart';
 
 class MongoDBService {
   static final Map<String, Db> _dbs = {};
@@ -39,10 +40,12 @@ class MongoDBService {
 
     for (final field in searchFields) {
       final user = await usersCollection.findOne({field: credential});
+
       if (user != null) {
         // Verify password
-        if (user['password_hash'] == hashPassword(password)) {
-          // Replace with actual password hashing logic
+        if (PasswordHasher.verifyPassword(password, user['pwd_hash'])) {
+          print("verify password");
+          print(user);
           return user;
         } else {
           // Incorrect password
