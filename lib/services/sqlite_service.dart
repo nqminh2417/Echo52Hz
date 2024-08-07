@@ -22,10 +22,16 @@ class SQLiteService {
   static Future<void> _onCreate(Database db, int version) async {
     // Create tables and initial data here
     await db.execute('''
-      CREATE TABLE users (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        name TEXT,
-        email TEXT
+      CREATE TABLE IF NOT EXISTS roles (
+        _id TEXT PRIMARY KEY,
+        role_cd TEXT,
+        role_nm TEXT,
+        descr TEXT,
+        crt_by TEXT,
+        crt_dt TEXT,
+        upd_by TEXT,
+        upd_dt TEXT,
+        permissions TEXT
       )
     ''');
   }

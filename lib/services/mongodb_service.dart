@@ -57,6 +57,43 @@ class MongoDBService {
     return null; // User not found
   }
 
+  static Future<List<Map<String, dynamic>>> getAllRoles(String databaseName) async {
+    await connect(databaseName);
+    final db = _dbs[databaseName]!;
+    final rolesCollection = db.collection('roles');
+
+    final roles = await rolesCollection.find().toList();
+    return roles;
+  }
+
+  static Future<Map<String, dynamic>?> getRole(String databaseName, String roleId) async {
+    await connect(databaseName);
+    final db = _dbs[databaseName]!;
+    final rolesCollection = db.collection('roles');
+
+    final role = await rolesCollection.findOne({'_id': ObjectId.fromHexString(roleId)});
+    return role;
+  }
+
+  static Future<bool> insertRole(String databaseName, Map<String, dynamic> roleData) async {
+    await connect(databaseName);
+    final db = _dbs[databaseName]!;
+    final rolesCollection = db.collection('roles');
+
+    await rolesCollection.insert(roleData);
+    return true;
+  }
+
+  static Future<bool> updateRole(String databaseName, String roleId, Map<String, dynamic> updatedData) async {
+    await connect(databaseName);
+    final db = _dbs[databaseName]!;
+    final rolesCollection = db.collection('roles');
+
+    final result = await rolesCollection.updateOne({'_id': ObjectId.fromHexString(roleId)}, {'\$set': updatedData});
+    // final result = await rolesCollection.updateOne(where.eq('_id', ObjectId.parse(roleId)),modify.set(fieldName, value));
+    return result.isSuccess;
+  }
+
   static Future<List<Map<String, dynamic>>> getData(String databaseName, String collectionName) async {
     await connect(databaseName);
     final db = _dbs[databaseName]!;
