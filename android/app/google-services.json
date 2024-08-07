@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "624447379642",
+    "project_id": "echo52hz-7527f",
+    "storage_bucket": "echo52hz-7527f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:624447379642:android:137cbb6528848917658a83",
+        "android_client_info": {
+          "package_name": "com.nqm.echo52hz"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFjowvHe5_GHr5J8utez9PBdmQYBjsOO0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
