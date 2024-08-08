@@ -1,3 +1,5 @@
+import 'package:echo_52hz/helpers/sqlite_helper.dart';
+import 'package:echo_52hz/models/role.dart';
 import 'package:echo_52hz/services/sqlite_service.dart';
 import 'package:flutter/material.dart';
 
@@ -163,9 +165,34 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     }
   }
 
-  void _testInitSQLiteDB() {
-    SQLiteService.initDatabase();
-    print("sqlite database created");
+  void _testSQliteGetAllTableNames() async {
+    final tables = await SQLiteService.getAllTableNames();
+    print(tables);
+  }
+
+  void _testSQliteGetAllRoles() async {
+    final aaa = await SQLiteService.getAllRoles();
+    print(aaa);
+  }
+
+  void _testSQliteGetRoleByCdOrId() async {
+    final role = await SQLiteService.getRoleByCdOrId('R200');
+    print(role);
+  }
+
+  void _testSQliteInsertRole() async {
+    final isInserted = await SQLiteService.insertRole(Role(roleCd: "R200", roleName: "RG", createdAt: DateTime.now()));
+    if (isInserted) {
+      // Handle successful insertion
+      print("Inserted role");
+    } else {
+      // Handle duplicate role_cd error
+      print("Duplicate role");
+    }
+  }
+
+  void _testSQliteResetDB() async {
+    await SQLiteHelper.resetDatabase();
   }
 
   @override
@@ -182,7 +209,12 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(onPressed: _testInitSQLiteDB, child: const Text('Init SQLite DB')),
+            ElevatedButton(onPressed: _testSQliteGetAllTableNames, child: const Text('SQLite: Get All Table Names')),
+            ElevatedButton(onPressed: _testSQliteGetAllRoles, child: const Text('SQLite: Get All Roles')),
+            ElevatedButton(
+                onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_cd Or _id')),
+            ElevatedButton(onPressed: _testSQliteInsertRole, child: const Text('SQLite: Insert Role')),
+            ElevatedButton(onPressed: _testSQliteResetDB, child: const Text('SQLite: Reset Database')),
             const Divider(),
             ElevatedButton(onPressed: _testGetAllRoles, child: const Text('Get All Roles')),
             ElevatedButton(onPressed: _testGetRole, child: const Text('Get Role')),
