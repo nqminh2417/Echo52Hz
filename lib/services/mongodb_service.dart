@@ -1,5 +1,6 @@
 import 'package:mongo_dart/mongo_dart.dart';
 import '../../helpers/password_hasher.dart';
+import '../models/role.dart';
 
 class MongoDBService {
   static final Map<String, Db> _dbs = {};
@@ -75,13 +76,22 @@ class MongoDBService {
     return role;
   }
 
-  static Future<bool> insertRole(String databaseName, Map<String, dynamic> roleData) async {
+// check this
+  static Future<Role> insertRole(String databaseName, Role newRole) async {
     await connect(databaseName);
     final db = _dbs[databaseName]!;
     final rolesCollection = db.collection('roles');
 
-    await rolesCollection.insert(roleData);
-    return true;
+    final result = await rolesCollection.insertOne(newRole.toMap());
+    final insertedId = result.id;
+    final insertedRole = await rolesCollection.findOne({'_id': ObjectId.fromHexString(insertedId)});
+
+    if (insertedRole == null) {
+      throw Exception('Failed to insert role');
+    }
+
+    await close(databaseName);
+    return Role.fromMap(insertedRole);
   }
 
   static Future<bool> updateRole(String databaseName, String roleId, Map<String, dynamic> updatedData) async {
@@ -90,7 +100,6 @@ class MongoDBService {
     final rolesCollection = db.collection('roles');
 
     final result = await rolesCollection.updateOne({'_id': ObjectId.fromHexString(roleId)}, {'\$set': updatedData});
-    // final result = await rolesCollection.updateOne(where.eq('_id', ObjectId.parse(roleId)),modify.set(fieldName, value));
     return result.isSuccess;
   }
 

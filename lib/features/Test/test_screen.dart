@@ -113,28 +113,23 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   void _testInsertRole() async {
     try {
       const databaseName = 'core_db';
-      final roleData = {
-        "role_cd": "TEST",
-        "role_nm": "Role Test",
-        "descr": "chỉ test thôi",
-        "crt_by": "user123",
-        "crt_dt": DateTime.now(),
-        "upd_by": "user123",
-        "upd_dt": DateTime.now(),
-        "permissions": ["view_users", "create_users", "edit_users", "delete_users"],
-      };
 
-      final success = await MongoDBService.insertRole(databaseName, roleData);
-      if (success) {
-        print('Role inserted successfully');
-      } else {
-        print('Failed to insert role');
-      }
+      Role roleData = Role(
+          roleCd: "TEST-4",
+          roleName: "Role Test 4",
+          description: "test lần 4",
+          createdBy: "user123",
+          createdAt: DateTime.now(),
+          updatedBy: "user123",
+          updatedAt: DateTime.now(),
+          permissions: ["view_users", "create_users", "edit_users", "delete_users"]);
+
+      final result = await MongoDBService.insertRole(databaseName, roleData);
+      print(result);
+      print('Role inserted successfully');
     } catch (e) {
       // Handle errors, e.g., show an error message
       print(e);
-    } finally {
-      await MongoDBService.close('core_db');
     }
   }
 
@@ -144,7 +139,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       const roleId = '66b2e73ab03dd04f7f000000';
       final roleData = {
         "role_nm": "Role Test Update",
-        "descr": "test update 2",
+        "descr": "test update 3",
         "crt_by": "user123",
         "crt_dt": DateTime.now(),
         "upd_by": "user123",
@@ -171,8 +166,8 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   }
 
   void _testSQliteGetAllRoles() async {
-    final aaa = await SQLiteService.getAllRoles();
-    print(aaa);
+    final roles = await SQLiteService.getAllRoles();
+    print(roles);
   }
 
   void _testSQliteGetRoleByCdOrId() async {
