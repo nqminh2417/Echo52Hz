@@ -2,6 +2,7 @@
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
 import '../utils/datetime_utils.dart';
 
@@ -51,7 +52,23 @@ class Role {
     );
   }
 
+  // * Use this method for mongodb
   Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      '_id': id,
+      'role_cd': roleCd,
+      'role_nm': roleName,
+      'descr': description,
+      'crt_by': createdBy,
+      'crt_dt': createdAt,
+      'upd_by': updatedBy,
+      'upd_dt': updatedAt,
+      'permissions': permissions,
+    };
+  }
+
+  // * Use this method for sqlite
+  Map<String, dynamic> toMapSqlite() {
     return <String, dynamic>{
       '_id': id,
       'role_cd': roleCd,
@@ -67,14 +84,14 @@ class Role {
 
   factory Role.fromMap(Map<String, dynamic> map) {
     return Role(
-      id: map['_id'] ?? '',
+      id: map['_id'] is ObjectId ? map['_id'].toHexString() : map['_id'] ?? '',
       roleCd: map['role_cd'] ?? '',
       roleName: map['role_nm'] ?? '',
       description: map['descr'] ?? '',
       createdBy: map['crt_by'] ?? '',
-      createdAt: _parseDate(map['crt_dt']),
+      createdAt: map['crt_dt'] is String ? _parseDate(map['crt_dt']) : map['crt_dt'],
       updatedBy: map['upd_by'] ?? '',
-      updatedAt: _parseDate(map['upd_dt']),
+      updatedAt: map['upd_dt'] is String ? _parseDate(map['upd_dt']) : map['upd_dt'],
       permissions: (map['permissions'] as List<dynamic>?)?.cast<String>() ?? [],
     );
   }

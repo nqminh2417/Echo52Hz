@@ -48,7 +48,7 @@ class SQLiteService {
     final db = await SQLiteHelper.database;
 
     try {
-      await db.insert('roles', role.toMap());
+      await db.insert('roles', role.toMapSqlite());
       return true; // Insertion successful
     } on DatabaseException catch (e) {
       if (e.isUniqueConstraintError()) {

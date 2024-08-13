@@ -77,23 +77,37 @@ class MongoDBService {
   }
 
 // check this
-  static Future<Role> insertRole(String databaseName, Role newRole) async {
-    await connect(databaseName);
-    final db = _dbs[databaseName]!;
-    final rolesCollection = db.collection('roles');
+  static Future<Role?> insertRole(String databaseName, Role newRole) async {
+    try {
+      await connect(databaseName);
+      final db = _dbs[databaseName]!;
+      final rolesCollection = db.collection('roles');
 
-    final result = await rolesCollection.insertOne(newRole.toMap());
-    final insertedId = result.id;
-    final insertedRole = await rolesCollection.findOne({'_id': ObjectId.fromHexString(insertedId)});
+      // Check for existing role code
+      final existingRole = await rolesCollection.findOne({'role_cd': newRole.roleCd});
+      if (existingRole != null) {
+        throw Exception('Role with code "${newRole.roleCd}" already exists');
+      }
 
-    if (insertedRole == null) {
-      throw Exception('Failed to insert role');
+      final result = await rolesCollection.insertOne(newRole.toMap());
+      final insertedId = result.id as ObjectId;
+      final insertedRole = await rolesCollection.findOne({'_id': insertedId});
+
+      if (insertedRole == null) {
+        throw Exception('Failed to insert role');
+      }
+
+      return Role.fromMap(insertedRole);
+    } catch (e) {
+      // Handle other errors
+      print('Error inserting role: $e');
+      rethrow; // Rethrow to be caught in the calling code
+    } finally {
+      await close(databaseName);
     }
-
-    await close(databaseName);
-    return Role.fromMap(insertedRole);
   }
 
+// check this
   static Future<bool> updateRole(String databaseName, String roleId, Map<String, dynamic> updatedData) async {
     await connect(databaseName);
     final db = _dbs[databaseName]!;

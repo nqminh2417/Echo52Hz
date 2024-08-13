@@ -124,12 +124,15 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
           updatedAt: DateTime.now(),
           permissions: ["view_users", "create_users", "edit_users", "delete_users"]);
 
-      final result = await MongoDBService.insertRole(databaseName, roleData);
-      print(result);
-      print('Role inserted successfully');
+      print(DateTime.now());
+      final insertedRole = await MongoDBService.insertRole(databaseName, roleData);
+      if (insertedRole != null) {
+        // Handle successful insertion
+        print('Role inserted successfully: ${insertedRole.toJson()}');
+      }
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print(e);
+      print('Unexpected error: $e');
     }
   }
 
