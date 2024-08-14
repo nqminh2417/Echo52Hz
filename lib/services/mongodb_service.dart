@@ -58,25 +58,41 @@ class MongoDBService {
     return null; // User not found
   }
 
-  static Future<List<Map<String, dynamic>>> getAllRoles(String databaseName) async {
-    await connect(databaseName);
-    final db = _dbs[databaseName]!;
-    final rolesCollection = db.collection('roles');
+  static Future<List<Role>> getAllRoles(String databaseName) async {
+    try {
+      await connect(databaseName);
+      final db = _dbs[databaseName]!;
+      final rolesCollection = db.collection('roles');
 
-    final roles = await rolesCollection.find().toList();
-    return roles;
+      final rolesData = await rolesCollection.find().toList();
+      return rolesData.map((roleData) => Role.fromMap(roleData)).toList();
+    } catch (e) {
+      print('Error getting all roles: $e');
+      rethrow;
+    } finally {
+      await close(databaseName);
+    }
   }
 
-  static Future<Map<String, dynamic>?> getRole(String databaseName, String roleId) async {
-    await connect(databaseName);
-    final db = _dbs[databaseName]!;
-    final rolesCollection = db.collection('roles');
+  static Future<Role?> getRole(String databaseName, String roleId) async {
+    try {
+      await connect(databaseName);
+      final db = _dbs[databaseName]!;
+      final rolesCollection = db.collection('roles');
 
-    final role = await rolesCollection.findOne({'_id': ObjectId.fromHexString(roleId)});
-    return role;
+      final roleData = await rolesCollection.findOne({'_id': ObjectId.fromHexString(roleId)});
+      if (roleData == null) {
+        return null; // Role not found
+      }
+      return Role.fromMap(roleData);
+    } catch (e) {
+      print('Error getting role: $e');
+      return null;
+    } finally {
+      await close(databaseName);
+    }
   }
 
-// check this
   static Future<Role?> insertRole(String databaseName, Role newRole) async {
     try {
       await connect(databaseName);
@@ -107,14 +123,21 @@ class MongoDBService {
     }
   }
 
-// check this
   static Future<bool> updateRole(String databaseName, String roleId, Map<String, dynamic> updatedData) async {
-    await connect(databaseName);
-    final db = _dbs[databaseName]!;
-    final rolesCollection = db.collection('roles');
+    try {
+      await connect(databaseName);
+      final db = _dbs[databaseName]!;
+      final rolesCollection = db.collection('roles');
 
-    final result = await rolesCollection.updateOne({'_id': ObjectId.fromHexString(roleId)}, {'\$set': updatedData});
-    return result.isSuccess;
+      final updateResult =
+          await rolesCollection.updateOne({'_id': ObjectId.fromHexString(roleId)}, {'\$set': updatedData});
+      return updateResult.isSuccess;
+    } catch (e) {
+      print('Error updating role: $e');
+      return false;
+    } finally {
+      await close(databaseName);
+    }
   }
 
   static Future<List<Map<String, dynamic>>> getData(String databaseName, String collectionName) async {

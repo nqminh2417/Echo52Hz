@@ -61,4 +61,23 @@ class SQLiteService {
       }
     }
   }
+
+// check this
+  static Future<bool> updateRole(Role role) async {
+    final db = await SQLiteHelper.database;
+
+    try {
+      final count = await db.update(
+        'roles',
+        role.toMapSqlite(),
+        where: '_id = ?',
+        whereArgs: [role.id],
+      );
+      return count > 0;
+    } catch (e) {
+      // Handle specific errors, like constraint violations or others
+      print('Error updating role: $e');
+      return false; // Indicate update failure
+    }
+  }
 }

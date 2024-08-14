@@ -93,8 +93,6 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     } catch (e) {
       // Handle errors, e.g., show an error message
       print(e);
-    } finally {
-      await MongoDBService.close('core_db');
     }
   }
 
@@ -105,8 +103,6 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     } catch (e) {
       // Handle errors, e.g., show an error message
       print(e);
-    } finally {
-      await MongoDBService.close('core_db');
     }
   }
 
@@ -142,7 +138,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       const roleId = '66b2e73ab03dd04f7f000000';
       final roleData = {
         "role_nm": "Role Test Update",
-        "descr": "test update 3",
+        "descr": "test update 5",
         "crt_by": "user123",
         "crt_dt": DateTime.now(),
         "upd_by": "user123",
@@ -158,8 +154,6 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     } catch (e) {
       // Handle errors, e.g., show an error message
       print(e);
-    } finally {
-      await MongoDBService.close('core_db');
     }
   }
 
@@ -179,13 +173,50 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   }
 
   void _testSQliteInsertRole() async {
-    final isInserted = await SQLiteService.insertRole(Role(roleCd: "R200", roleName: "RG", createdAt: DateTime.now()));
+    final isInserted = await SQLiteService.insertRole(Role(
+        id: "66b2e73ab03dd04f7f000000",
+        roleCd: "TEST",
+        roleName: "Role Test Update",
+        description: "test update 5",
+        createdAt: DateTime.now()));
     if (isInserted) {
       // Handle successful insertion
       print("Inserted role");
     } else {
       // Handle duplicate role_cd error
       print("Duplicate role");
+    }
+  }
+
+// check this
+  void _testSQLiteUpdateRole() async {
+    try {
+      const roleId = '66b2e73ab03dd04f7f000000';
+      // final roleData = {
+      //   "role_nm": "Role Test Update",
+      //   "descr": "test update 1",
+      //   "crt_by": "user456",
+      //   "crt_dt": DateTime.now(),
+      //   "upd_by": "user123",
+      //   "upd_dt": DateTime.now(),
+      // };
+
+      Role roleToUpdate = Role(
+          id: roleId,
+          roleCd: "TEST",
+          roleName: "Role Test Update",
+          description: "test update 1",
+          updatedAt: DateTime.now());
+
+      final success = await SQLiteService.updateRole(roleToUpdate);
+      if (success) {
+        print('Role updated successfully');
+      } else {
+        print('Failed to update role');
+      }
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      print(e);
     }
   }
 
@@ -212,6 +243,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
             ElevatedButton(
                 onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_cd Or _id')),
             ElevatedButton(onPressed: _testSQliteInsertRole, child: const Text('SQLite: Insert Role')),
+            ElevatedButton(onPressed: _testSQLiteUpdateRole, child: const Text('SQLite: Update Role')),
             ElevatedButton(onPressed: _testSQliteResetDB, child: const Text('SQLite: Reset Database')),
             const Divider(),
             ElevatedButton(onPressed: _testGetAllRoles, child: const Text('Get All Roles')),
