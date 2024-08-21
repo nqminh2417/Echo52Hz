@@ -38,6 +38,15 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text('Go to eIS'),
               trailing: Icon(Icons.access_time),
             ),
+            ListTile(
+              leading: const Text('2'),
+              title: const Text('Go to Role Screen'),
+              trailing: const Icon(Icons.list),
+              onTap: () {
+                // Navigator.pushNamedAndRemoveUntil(context, '/roles', (route) => false);
+                Navigator.pushNamed(context, '/roles');
+              },
+            ),
             const Text('Welcome to the Home Screen!'),
             ElevatedButton(
               onPressed: () {

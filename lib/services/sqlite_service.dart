@@ -24,21 +24,15 @@ class SQLiteService {
   static Future<Role?> getRoleByCdOrId(String identifier) async {
     final db = await SQLiteHelper.database;
 
-    // Check if the identifier is a valid integer (likely an id)
-    int? id = int.tryParse(identifier);
+    // Query based on either id or role_cd
+    final maps = await db.query(
+      'roles',
+      where: '_id = ? OR role_cd = ?',
+      whereArgs: [identifier, identifier],
+    );
 
-    if (id != null) {
-      // Query by id
-      final maps = await db.query('roles', where: 'id = ?', whereArgs: [id]);
-      if (maps.isNotEmpty) {
-        return Role.fromMap(maps.first);
-      }
-    } else {
-      // Query by role_cd
-      final maps = await db.query('roles', where: 'role_cd = ?', whereArgs: [identifier]);
-      if (maps.isNotEmpty) {
-        return Role.fromMap(maps.first);
-      }
+    if (maps.isNotEmpty) {
+      return Role.fromMap(maps.first);
     }
 
     return null; // Role not found

@@ -164,6 +164,8 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   void _testSQliteGetAllRoles() async {
     final roles = await SQLiteService.getAllRoles();
+    final count = roles.length;
+    print('Count: $count');
     print(roles);
   }
 
