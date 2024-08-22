@@ -135,17 +135,25 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   void _testUpdateRole() async {
     try {
       const databaseName = 'core_db';
-      const roleId = '66b2e73ab03dd04f7f000000';
-      final roleData = {
-        "role_nm": "Role Test Update",
-        "descr": "test update 5",
-        "crt_by": "user123",
-        "crt_dt": DateTime.now(),
-        "upd_by": "user123",
-        "upd_dt": DateTime.now(),
-      };
+      // const roleId = '66b2e73ab03dd04f7f000000';
+      // final roleData = {
+      //   "role_nm": "Role Test Update",
+      //   "descr": "test update 5",
+      //   "crt_by": "user123",
+      //   "crt_dt": DateTime.now(),
+      //   "upd_by": "user123",
+      //   "upd_dt": DateTime.now(),
+      // };
+//----------------------------------------------------------------
+      Role roleData = Role(
+        id: "66b2e73ab03dd04f7f000000",
+        roleCd: "TEST",
+        roleName: "Role Test Update",
+        description: "test update 6",
+        createdBy: "Minh",
+      );
 
-      final success = await MongoDBService.updateRole(databaseName, roleId, roleData);
+      final success = await MongoDBService.updateRole(databaseName, roleData);
       if (success) {
         print('Role updated successfully');
       } else {
@@ -170,7 +178,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   }
 
   void _testSQliteGetRoleByCdOrId() async {
-    final role = await SQLiteService.getRoleByCdOrId('R200');
+    final role = await SQLiteService.getRoleByCdOrId('66b2e73ab03dd04f7f000000');
     print(role);
   }
 
@@ -207,7 +215,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
           id: roleId,
           roleCd: "TEST",
           roleName: "Role Test Update",
-          description: "test update 1",
+          description: "test update 5",
           updatedAt: DateTime.now());
 
       final success = await SQLiteService.updateRole(roleToUpdate);

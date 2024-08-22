@@ -123,14 +123,21 @@ class MongoDBService {
     }
   }
 
-  static Future<bool> updateRole(String databaseName, String roleId, Map<String, dynamic> updatedData) async {
+  static Future<bool> updateRole(String databaseName, Role updatedRole) async {
     try {
       await connect(databaseName);
       final db = _dbs[databaseName]!;
       final rolesCollection = db.collection('roles');
 
-      final updateResult =
-          await rolesCollection.updateOne({'_id': ObjectId.fromHexString(roleId)}, {'\$set': updatedData});
+      final Map<String, dynamic> updateData = {};
+      updatedRole.toMap().forEach((key, value) {
+        if (key != '_id' && value != null) {
+          updateData[key] = value;
+        }
+      });
+
+      final updateResult = await rolesCollection
+          .updateOne({'_id': ObjectId.fromHexString(updatedRole.id.toString())}, {'\$set': updateData});
       return updateResult.isSuccess;
     } catch (e) {
       print('Error updating role: $e');

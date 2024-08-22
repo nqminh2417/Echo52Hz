@@ -57,15 +57,27 @@ class SQLiteService {
   }
 
 // check this
-  static Future<bool> updateRole(Role role) async {
+  static Future<bool> updateRole(Role updatedRole) async {
     final db = await SQLiteHelper.database;
+
+    final Map<String, dynamic> updateData = {};
+    updatedRole.toMapSqlite().forEach((key, value) {
+      if (key != '_id' && value != null) {
+        updateData[key] = value;
+      }
+    });
+
+    if (updateData.isEmpty) {
+      // No fields have changed
+      return false;
+    }
 
     try {
       final count = await db.update(
         'roles',
-        role.toMapSqlite(),
+        updateData,
         where: '_id = ?',
-        whereArgs: [role.id],
+        whereArgs: [updatedRole.id],
       );
       return count > 0;
     } catch (e) {

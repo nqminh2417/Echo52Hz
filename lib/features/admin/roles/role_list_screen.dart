@@ -41,7 +41,6 @@ class _RoleListScreenState extends State<RoleListScreen> {
             subtitle: Text(role.description!),
             onTap: () {
               // Navigate to edit role screen
-              // Navigator.pushNamed(context, '/roles/edit', arguments: role.id);
               Navigator.push(
                 context,
                 MaterialPageRoute(
