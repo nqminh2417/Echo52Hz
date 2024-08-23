@@ -16,6 +16,7 @@ class TestScreen extends StatefulWidget {
 class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   List<Map<String, dynamic>> users = [];
   List<String?> collNames = [];
+  bool _isResetting = false;
 
   @override
   void initState() {
@@ -165,6 +166,10 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     }
   }
 
+  void _testSyncData() async {
+    // from MongoDB to SQLite
+  }
+
   void _testSQliteGetAllTableNames() async {
     final tables = await SQLiteService.getAllTableNames();
     print(tables);
@@ -184,7 +189,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   void _testSQliteInsertRole() async {
     final isInserted = await SQLiteService.insertRole(Role(
-        id: "66b2e73ab03dd04f7f000000",
+        id: "gbggbgbgbgb",
         roleCd: "TEST",
         roleName: "Role Test Update",
         description: "test update 5",
@@ -231,7 +236,22 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   }
 
   void _testSQliteResetDB() async {
-    await SQLiteHelper.resetDatabase();
+    setState(() {
+      _isResetting = true;
+    });
+
+    try {
+      await SQLiteHelper.resetDatabase();
+      // Handle successful reset
+      print('Database reset successfully');
+    } catch (e) {
+      // Handle errors
+      print('Error resetting database: $e');
+    } finally {
+      setState(() {
+        _isResetting = false;
+      });
+    }
   }
 
   @override
@@ -248,13 +268,20 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            ElevatedButton(onPressed: _testSyncData, child: const Text('Sync data from MongoDB to SQLite')),
             ElevatedButton(onPressed: _testSQliteGetAllTableNames, child: const Text('SQLite: Get All Table Names')),
             ElevatedButton(onPressed: _testSQliteGetAllRoles, child: const Text('SQLite: Get All Roles')),
             ElevatedButton(
                 onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_cd Or _id')),
             ElevatedButton(onPressed: _testSQliteInsertRole, child: const Text('SQLite: Insert Role')),
             ElevatedButton(onPressed: _testSQLiteUpdateRole, child: const Text('SQLite: Update Role')),
-            ElevatedButton(onPressed: _testSQliteResetDB, child: const Text('SQLite: Reset Database')),
+            ElevatedButton(
+                onPressed: _isResetting ? null : _testSQliteResetDB,
+                child: Text(_isResetting ? 'Resetting...' : 'SQLite: Reset Database')),
+            Visibility(
+              visible: _isResetting,
+              child: const CircularProgressIndicator(),
+            ),
             const Divider(),
             ElevatedButton(onPressed: _testGetAllRoles, child: const Text('Get All Roles')),
             ElevatedButton(onPressed: _testGetRole, child: const Text('Get Role')),

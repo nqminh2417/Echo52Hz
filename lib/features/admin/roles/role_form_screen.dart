@@ -45,14 +45,17 @@ class _RoleFormScreenState extends State<RoleFormScreen> {
   Future<void> _saveRole() async {
     if (_role == null) {
       // Add a new role
-      final updatedRole = Role(
+      final newRole = Role(
         roleCd: _codeController.text,
         roleName: _nameController.text,
         description: _descriptionController.text,
         createdBy: _createByController.text,
+        createdAt: DateTime.now(),
+        updatedBy: "Minh",
+        updatedAt: DateTime.now(),
       );
-
-      // await RoleService().addRole(role);
+      final newRole0 = await MongoDBService.insertRole("core_db", newRole);
+      await SQLiteService.insertRole(newRole0!);
     } else {
       // Update the existing role
       final updatedRole = Role(
@@ -60,7 +63,7 @@ class _RoleFormScreenState extends State<RoleFormScreen> {
         roleCd: (_codeController.text != _role!.roleCd) ? _codeController.text : _role!.roleCd,
         roleName: _nameController.text != _role!.roleName ? _nameController.text : _role!.roleName,
         description: _descriptionController.text != _role?.description ? _descriptionController.text : null,
-        createdBy: _createByController.text != _role!.createdBy ? _createByController.text : null,
+        updatedBy: "Minh",
         updatedAt: DateTime.now(),
       );
       await MongoDBService.updateRole("core_db", updatedRole);

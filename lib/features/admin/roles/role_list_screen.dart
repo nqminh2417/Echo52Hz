@@ -31,7 +31,23 @@ class _RoleListScreenState extends State<RoleListScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Role List')),
+      appBar: AppBar(
+        title: const Text('Role List'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.add_circle_outline),
+            onPressed: () {
+              // Navigate to add role screen
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const RoleFormScreen(roleId: null),
+                ),
+              );
+            },
+          )
+        ],
+      ),
       body: ListView.builder(
         itemCount: _roles.length,
         itemBuilder: (context, index) {

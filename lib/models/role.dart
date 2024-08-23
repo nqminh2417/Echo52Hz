@@ -92,7 +92,7 @@ class Role {
       createdAt: map['crt_dt'] is String ? _parseDate(map['crt_dt']) : map['crt_dt'],
       updatedBy: map['upd_by'] ?? '',
       updatedAt: map['upd_dt'] is String ? _parseDate(map['upd_dt']) : map['upd_dt'],
-      permissions: (map['permissions'] as List<dynamic>?)?.cast<String>() ?? [],
+      permissions: (map['permissions'] as List<dynamic>?)?.cast<String>(),
     );
   }
 

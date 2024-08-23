@@ -14,11 +14,18 @@ class SQLiteService {
 
   static Future<List<Role>> getAllRoles() async {
     final db = await SQLiteHelper.database;
-    final List<Map<String, dynamic>> maps = await db.query('roles');
 
-    return List.generate(maps.length, (index) {
-      return Role.fromMap(maps[index]);
-    });
+    if (db.isOpen) {
+      print('Database status: ${db.isOpen}');
+      final List<Map<String, dynamic>> maps = await db.query('roles');
+      return List.generate(maps.length, (index) {
+        return Role.fromMap(maps[index]);
+      });
+    } else {
+      // Handle database closed error
+      print('Database is closed');
+      return []; // Or throw an exception
+    }
   }
 
   static Future<Role?> getRoleByCdOrId(String identifier) async {
