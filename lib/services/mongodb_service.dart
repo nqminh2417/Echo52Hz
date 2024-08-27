@@ -1,38 +1,40 @@
 import 'package:mongo_dart/mongo_dart.dart';
 import '../../helpers/password_hasher.dart';
 import '../models/role.dart';
+import '../utils/constants.dart';
 
 class MongoDBService {
+  // static const databaseName = 'core_db';
   static final Map<String, Db> _dbs = {};
 
-  static Future<void> connect(String databaseName) async {
+  static Future<void> connect() async {
     if (_dbs.containsKey(databaseName)) {
       return; // Database already connected
     }
 
-    final connectionString =
+    const connectionString =
         'mongodb+srv://admin:zxc123@clusterflutter.vnmcr2s.mongodb.net/$databaseName?retryWrites=true&w=majority&appName=ClusterFlutter';
     final db = await Db.create(connectionString);
     await db.open();
     _dbs[databaseName] = db;
   }
 
-  static Future<void> close(String databaseName) async {
+  static Future<void> close() async {
     if (_dbs.containsKey(databaseName)) {
       await _dbs[databaseName]!.close();
       _dbs.remove(databaseName);
     }
   }
 
-  static Future<List<String?>> getCollectionNames(String databaseName) async {
-    await connect(databaseName);
+  static Future<List<String?>> getCollectionNames() async {
+    await connect();
     final db = _dbs[databaseName]!;
     final collectionNames = await db.getCollectionNames();
     return collectionNames;
   }
 
-  static Future<Map<String, dynamic>?> loginUser(String databaseName, String credential, String password) async {
-    await connect(databaseName);
+  static Future<Map<String, dynamic>?> loginUser(String credential, String password) async {
+    await connect();
     final db = _dbs[databaseName]!;
     final usersCollection = db.collection('users');
 
@@ -58,9 +60,9 @@ class MongoDBService {
     return null; // User not found
   }
 
-  static Future<List<Role>> getAllRoles(String databaseName) async {
+  static Future<List<Role>> getAllRoles() async {
     try {
-      await connect(databaseName);
+      await connect();
       final db = _dbs[databaseName]!;
       final rolesCollection = db.collection('roles');
 
@@ -70,13 +72,13 @@ class MongoDBService {
       print('Error getting all roles: $e');
       rethrow;
     } finally {
-      await close(databaseName);
+      await close();
     }
   }
 
-  static Future<Role?> getRole(String databaseName, String roleId) async {
+  static Future<Role?> getRole(String roleId) async {
     try {
-      await connect(databaseName);
+      await connect();
       final db = _dbs[databaseName]!;
       final rolesCollection = db.collection('roles');
 
@@ -89,13 +91,13 @@ class MongoDBService {
       print('Error getting role: $e');
       return null;
     } finally {
-      await close(databaseName);
+      await close();
     }
   }
 
-  static Future<Role?> insertRole(String databaseName, Role newRole) async {
+  static Future<Role?> insertRole(Role newRole) async {
     try {
-      await connect(databaseName);
+      await connect();
       final db = _dbs[databaseName]!;
       final rolesCollection = db.collection('roles');
 
@@ -119,13 +121,13 @@ class MongoDBService {
       print('Error inserting role: $e');
       rethrow; // Rethrow to be caught in the calling code
     } finally {
-      await close(databaseName);
+      await close();
     }
   }
 
-  static Future<bool> updateRole(String databaseName, Role updatedRole) async {
+  static Future<bool> updateRole(Role updatedRole) async {
     try {
-      await connect(databaseName);
+      await connect();
       final db = _dbs[databaseName]!;
       final rolesCollection = db.collection('roles');
 
@@ -143,12 +145,12 @@ class MongoDBService {
       print('Error updating role: $e');
       return false;
     } finally {
-      await close(databaseName);
+      await close();
     }
   }
 
-  static Future<List<Map<String, dynamic>>> getData(String databaseName, String collectionName) async {
-    await connect(databaseName);
+  static Future<List<Map<String, dynamic>>> getData(String collectionName) async {
+    await connect();
     final db = _dbs[databaseName]!;
     final coll = db.collection(collectionName);
     final results = await coll.find().toList();

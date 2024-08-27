@@ -54,7 +54,7 @@ class _RoleFormScreenState extends State<RoleFormScreen> {
         updatedBy: "Minh",
         updatedAt: DateTime.now(),
       );
-      final newRole0 = await MongoDBService.insertRole("core_db", newRole);
+      final newRole0 = await MongoDBService.insertRole(newRole);
       await SQLiteService.insertRole(newRole0!);
     } else {
       // Update the existing role
@@ -66,7 +66,7 @@ class _RoleFormScreenState extends State<RoleFormScreen> {
         updatedBy: "Minh",
         updatedAt: DateTime.now(),
       );
-      await MongoDBService.updateRole("core_db", updatedRole);
+      await MongoDBService.updateRole(updatedRole);
       await SQLiteService.updateRole(updatedRole);
     }
 

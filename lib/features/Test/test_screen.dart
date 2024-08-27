@@ -29,7 +29,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   Future<void> _fetchData() async {
     try {
-      final fetchedUsers = await MongoDBService.getData('core_db', 'users');
+      final fetchedUsers = await MongoDBService.getData('users');
       setState(() {
         users = fetchedUsers;
       });
@@ -37,13 +37,13 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       // Handle errors, e.g., show an error message
       print(e);
     } finally {
-      await MongoDBService.close('core_db');
+      await MongoDBService.close();
     }
   }
 
   Future<void> _fetchData2() async {
     try {
-      final fetchedCollNames = await MongoDBService.getCollectionNames('core_db');
+      final fetchedCollNames = await MongoDBService.getCollectionNames();
       setState(() {
         collNames = fetchedCollNames;
       });
@@ -51,7 +51,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       // Handle errors, e.g., show an error message
       print(e);
     } finally {
-      await MongoDBService.close('core_db');
+      await MongoDBService.close();
     }
   }
 
@@ -76,7 +76,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   Future<void> _fetchData4() async {
     try {
-      final aaa = await MongoDBService.loginUser('core_db', 'un123', 'zxc.123456');
+      final aaa = await MongoDBService.loginUser('un123', 'zxc.123456');
       print("4444");
       print(aaa);
     } catch (e) {
@@ -89,7 +89,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   void _testGetAllRoles() async {
     try {
-      final roles = await MongoDBService.getAllRoles('core_db');
+      final roles = await MongoDBService.getAllRoles();
       print(roles);
     } catch (e) {
       // Handle errors, e.g., show an error message
@@ -99,7 +99,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   void _testGetRole() async {
     try {
-      final role = await MongoDBService.getRole('core_db', '66b2e73ab03dd04f7f000000');
+      final role = await MongoDBService.getRole('66b2e73ab03dd04f7f000000');
       print(role);
     } catch (e) {
       // Handle errors, e.g., show an error message
@@ -109,8 +109,6 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   void _testInsertRole() async {
     try {
-      const databaseName = 'core_db';
-
       Role roleData = Role(
           roleCd: "TEST-4",
           roleName: "Role Test 4",
@@ -122,7 +120,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
           permissions: ["view_users", "create_users", "edit_users", "delete_users"]);
 
       print(DateTime.now());
-      final insertedRole = await MongoDBService.insertRole(databaseName, roleData);
+      final insertedRole = await MongoDBService.insertRole(roleData);
       if (insertedRole != null) {
         // Handle successful insertion
         print('Role inserted successfully: ${insertedRole.toJson()}');
@@ -135,7 +133,6 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   void _testUpdateRole() async {
     try {
-      const databaseName = 'core_db';
       // const roleId = '66b2e73ab03dd04f7f000000';
       // final roleData = {
       //   "role_nm": "Role Test Update",
@@ -154,7 +151,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
         createdBy: "Minh",
       );
 
-      final success = await MongoDBService.updateRole(databaseName, roleData);
+      final success = await MongoDBService.updateRole(roleData);
       if (success) {
         print('Role updated successfully');
       } else {
