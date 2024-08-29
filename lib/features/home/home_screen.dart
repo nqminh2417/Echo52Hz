@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../Test/test_screen.dart';
 import '../authentication/login_screen.dart';
+import '../data_sync/data_sync_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -38,6 +39,7 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text('Go to eIS'),
               trailing: Icon(Icons.access_time),
             ),
+            const Divider(),
             ListTile(
               leading: const Text('2'),
               title: const Text('Go to Role Screen'),
@@ -45,6 +47,19 @@ class _HomeScreenState extends State<HomeScreen> {
               onTap: () {
                 // Navigator.pushNamedAndRemoveUntil(context, '/roles', (route) => false);
                 Navigator.pushNamed(context, '/roles');
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Text('3'),
+              title: const Text('Sync Data'),
+              trailing: const Icon(Icons.sync),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => const DataSyncModal(),
+                );
               },
             ),
             const Text('Welcome to the Home Screen!'),

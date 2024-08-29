@@ -18,6 +18,7 @@ class SQLiteService {
     if (db.isOpen) {
       print('Database status: ${db.isOpen}');
       final List<Map<String, dynamic>> maps = await db.query('roles');
+      print(maps);
       return List.generate(maps.length, (index) {
         return Role.fromMap(maps[index]);
       });
@@ -31,6 +32,9 @@ class SQLiteService {
   static Future<Role?> getRoleByCdOrId(String identifier) async {
     final db = await SQLiteHelper.database;
 
+    if (db.isOpen) {
+      print('Database status: ${db.isOpen}');
+    }
     // Query based on either id or role_cd
     final maps = await db.query(
       'roles',

@@ -99,8 +99,9 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   void _testGetRole() async {
     try {
-      final role = await MongoDBService.getRole('66b2e73ab03dd04f7f000000');
+      final role = await MongoDBService.getRole('66d02eab6cf648b00e000000');
       print(role);
+      // print(role!.permissions![0]);
     } catch (e) {
       // Handle errors, e.g., show an error message
       print(e);
@@ -110,14 +111,15 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   void _testInsertRole() async {
     try {
       Role roleData = Role(
-          roleCd: "TEST-4",
-          roleName: "Role Test 4",
-          description: "test lần 4",
-          createdBy: "user123",
-          createdAt: DateTime.now(),
-          updatedBy: "user123",
-          updatedAt: DateTime.now(),
-          permissions: ["view_users", "create_users", "edit_users", "delete_users"]);
+        roleCd: "TEST-4",
+        roleName: "Role Test 4",
+        description: "test lần 4",
+        createdBy: "user123",
+        createdAt: DateTime.now(),
+        updatedBy: "user123",
+        updatedAt: DateTime.now(),
+        // permissions: ["view_users", "create_users", "edit_users", "delete_users"]
+      );
 
       print(DateTime.now());
       final insertedRole = await MongoDBService.insertRole(roleData);
@@ -144,12 +146,15 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       // };
 //----------------------------------------------------------------
       Role roleData = Role(
-        id: "66b2e73ab03dd04f7f000000",
-        roleCd: "TEST",
-        roleName: "Role Test Update",
-        description: "test update 6",
-        createdBy: "Minh",
-      );
+          id: "66ac76aec0030fec33cd058a",
+          roleCd: "BASIC",
+          roleName: "Basic User",
+          // description: "test update 6",
+          createdBy: "Minh",
+          createdAt: DateTime.now(),
+          updatedBy: "Minh",
+          updatedAt: DateTime.now(),
+          permissions: ["view_users", "create_users", "edit_users", "delete_users"]);
 
       final success = await MongoDBService.updateRole(roleData);
       if (success) {
@@ -180,7 +185,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   }
 
   void _testSQliteGetRoleByCdOrId() async {
-    final role = await SQLiteService.getRoleByCdOrId('66b2e73ab03dd04f7f000000');
+    final role = await SQLiteService.getRoleByCdOrId('66d02eab6cf648b00e000000');
     print(role);
   }
 

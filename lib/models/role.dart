@@ -63,7 +63,7 @@ class Role {
       'crt_dt': createdAt,
       'upd_by': updatedBy,
       'upd_dt': updatedAt,
-      'permissions': permissions,
+      'permissions': permissions ?? [],
     };
   }
 
@@ -78,7 +78,7 @@ class Role {
       'crt_dt': createdAt != null ? DateTimeUtils.dateTimeToString(createdAt!) : null,
       'upd_by': updatedBy,
       'upd_dt': updatedAt != null ? DateTimeUtils.dateTimeToString(updatedAt!) : null,
-      'permissions': permissions,
+      'permissions': jsonEncode(permissions),
     };
   }
 
@@ -92,7 +92,9 @@ class Role {
       createdAt: map['crt_dt'] is String ? _parseDate(map['crt_dt']) : map['crt_dt'],
       updatedBy: map['upd_by'] ?? '',
       updatedAt: map['upd_dt'] is String ? _parseDate(map['upd_dt']) : map['upd_dt'],
-      permissions: (map['permissions'] as List<dynamic>?)?.cast<String>(),
+      permissions: map['permissions'] is String
+          ? (jsonDecode(map['permissions']) as List<dynamic>).cast<String>()
+          : (map['permissions'] as List<dynamic>).cast<String>(),
     );
   }
 
