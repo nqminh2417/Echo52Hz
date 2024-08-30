@@ -18,7 +18,7 @@ class SQLiteService {
     if (db.isOpen) {
       print('Database status: ${db.isOpen}');
       final List<Map<String, dynamic>> maps = await db.query('roles');
-      print(maps);
+
       return List.generate(maps.length, (index) {
         return Role.fromMap(maps[index]);
       });

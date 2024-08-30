@@ -60,6 +60,7 @@ class SQLiteHelper {
     await deleteDatabase(path);
 
     // Reinitialize the database
+    _database = null; // Ensure the database is closed
     await _initDatabase();
   }
 

@@ -52,6 +52,15 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider(),
             ListTile(
               leading: const Text('3'),
+              title: const Text('Device Info'),
+              trailing: const Icon(Icons.perm_device_information),
+              onTap: () {
+                Navigator.pushNamed(context, '/device-info');
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Text('4'),
               title: const Text('Sync Data'),
               trailing: const Icon(Icons.sync),
               onTap: () {
@@ -62,6 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
+            const Divider(),
             const Text('Welcome to the Home Screen!'),
             ElevatedButton(
               onPressed: () {
