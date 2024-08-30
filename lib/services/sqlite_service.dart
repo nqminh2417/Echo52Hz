@@ -1,60 +1,100 @@
-import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../helpers/sqlite_helper.dart';
+import '../models/role.dart';
+
 class SQLiteService {
-  static const _databaseName = 'echo.db';
-  static const _databaseVersion = 1;
+  static Future<List<String>> getAllTableNames() async {
+    final db = await SQLiteHelper.database;
+    final List<Map<String, dynamic>> maps = await db.query('sqlite_master', where: 'type = ?', whereArgs: ['table']);
+    return List.generate(maps.length, (index) {
+      return maps[index]['name'] as String;
+    });
+  }
 
-  static late Database _database;
+  static Future<List<Role>> getAllRoles() async {
+    final db = await SQLiteHelper.database;
 
-  static Future<void> initDatabase() async {
-    final databasesPath = await getDatabasesPath();
-    final dbPath = join(databasesPath, _databaseName);
+    if (db.isOpen) {
+      print('Database status: ${db.isOpen}');
+      final List<Map<String, dynamic>> maps = await db.query('roles');
 
-    _database = await openDatabase(
-      dbPath,
-      version: _databaseVersion,
-      onCreate: _onCreate,
-      onUpgrade: _onUpgrade, // Optional: for database schema changes
+      return List.generate(maps.length, (index) {
+        return Role.fromMap(maps[index]);
+      });
+    } else {
+      // Handle database closed error
+      print('Database is closed');
+      return []; // Or throw an exception
+    }
+  }
+
+  static Future<Role?> getRoleByCdOrId(String identifier) async {
+    final db = await SQLiteHelper.database;
+
+    if (db.isOpen) {
+      print('Database status: ${db.isOpen}');
+    }
+    // Query based on either id or role_cd
+    final maps = await db.query(
+      'roles',
+      where: '_id = ? OR role_cd = ?',
+      whereArgs: [identifier, identifier],
     );
+
+    if (maps.isNotEmpty) {
+      return Role.fromMap(maps.first);
+    }
+
+    return null; // Role not found
   }
 
-  static Future<void> _onCreate(Database db, int version) async {
-    // Create tables and initial data here
-    await db.execute('''
-      CREATE TABLE IF NOT EXISTS roles (
-        _id TEXT PRIMARY KEY,
-        role_cd TEXT,
-        role_nm TEXT,
-        descr TEXT,
-        crt_by TEXT,
-        crt_dt TEXT,
-        upd_by TEXT,
-        upd_dt TEXT,
-        permissions TEXT
-      )
-    ''');
+  static Future<bool> insertRole(Role role) async {
+    final db = await SQLiteHelper.database;
+
+    try {
+      await db.insert('roles', role.toMapSqlite());
+      return true; // Insertion successful
+    } on DatabaseException catch (e) {
+      if (e.isUniqueConstraintError()) {
+        // Handle duplicate role_cd error
+        print('Role code already exists');
+        return false; // Insertion failed due to duplicate
+      } else {
+        // Handle other database exceptions
+        rethrow;
+      }
+    }
   }
 
-  static Future<void> _onUpgrade(Database db, int oldVersion, int newVersion) async {
-    // Handle database schema changes
-  }
+// check this
+  static Future<bool> updateRole(Role updatedRole) async {
+    final db = await SQLiteHelper.database;
 
-  static Future<void> resetDatabase() async {
-    final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, _databaseName);
-    await deleteDatabase(path);
-    await initDatabase();
-  }
+    final Map<String, dynamic> updateData = {};
+    updatedRole.toMapSqlite().forEach((key, value) {
+      if (key != '_id' && value != null) {
+        updateData[key] = value;
+      }
+    });
 
-  static Future<void> deleteDatabase(String path) async {
-    final databasesPath = await getDatabasesPath();
-    final path = join(databasesPath, _databaseName);
-    await deleteDatabase(path);
-  }
+    if (updateData.isEmpty) {
+      // No fields have changed
+      return false;
+    }
 
-  // static Future<void> createTable(String tableName, String createSql) async {
-  //   final db = await database;
-  //   await db.execute('CREATE TABLE $tableName ($createSql)');
-  // }
+    try {
+      final count = await db.update(
+        'roles',
+        updateData,
+        where: '_id = ?',
+        whereArgs: [updatedRole.id],
+      );
+      return count > 0;
+    } catch (e) {
+      // Handle specific errors, like constraint violations or others
+      print('Error updating role: $e');
+      return false; // Indicate update failure
+    }
+  }
 }

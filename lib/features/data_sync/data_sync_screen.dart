@@ -1,59 +1,73 @@
 import 'package:flutter/material.dart';
 
-import 'data_sync_model.dart';
 import 'data_sync_service.dart';
 
-class DataSyncScreen extends StatefulWidget {
-  const DataSyncScreen({super.key});
+class DataSyncModal extends StatefulWidget {
+  const DataSyncModal({super.key});
 
   @override
-  State<DataSyncScreen> createState() => _DataSyncScreenState();
+  State<DataSyncModal> createState() => _DataSyncModalState();
 }
 
-class _DataSyncScreenState extends State<DataSyncScreen> {
-  final DataSyncService _dataSyncService = DataSyncService();
-  SyncProgress? _syncProgress;
-  SyncError? _syncError;
+class _DataSyncModalState extends State<DataSyncModal> {
+  bool _isSyncing = false;
+  String _syncStatus = 'Initializing...';
 
   @override
   void initState() {
     super.initState();
-    _startSync();
+    _syncData();
   }
 
-  Future<void> _startSync() async {
+  Future<void> _syncData() async {
+    setState(() {
+      _isSyncing = true;
+      _syncStatus = 'Syncing data...';
+    });
+
     try {
+      await DataSyncService.syncData();
       setState(() {
-        _syncProgress = null;
-        _syncError = null;
-      });
-      final progress = await _dataSyncService.synchronizeData();
-      setState(() {
-        // _syncProgress = progress;
+        _isSyncing = false;
+        _syncStatus = 'Synchronization complete!';
       });
     } catch (e) {
       setState(() {
-        _syncError = SyncError(e.toString());
+        _isSyncing = false;
+        _syncStatus = 'Error: $e';
       });
+      print('Error: $e');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Data Synchronization'),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            if (_syncProgress != null)
-              LinearProgressIndicator(value: _syncProgress!.completedItems / _syncProgress!.totalItems),
-            if (_syncProgress != null)
-              Text('${_syncProgress!.completedItems}/${_syncProgress!.totalItems} items synced'),
-            if (_syncError != null) Text(_syncError!.message),
-          ],
+    return PopScope(
+      canPop: false,
+      child: AlertDialog(
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        content: Container(
+          padding: const EdgeInsets.all(20),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (_isSyncing) const CircularProgressIndicator(),
+              const SizedBox(height: 16),
+              Text(_syncStatus),
+              if (!_isSyncing)
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Close'),
+                ),
+            ],
+          ),
         ),
       ),
     );
