@@ -1,3 +1,4 @@
+import 'package:echo_52hz/features/clock/clock_screen.dart';
 import 'package:echo_52hz/helpers/sqlite_helper.dart';
 import 'package:echo_52hz/models/role.dart';
 import 'package:echo_52hz/services/sqlite_service.dart';
@@ -5,6 +6,9 @@ import 'package:flutter/material.dart';
 
 import '../../helpers/password_hasher.dart';
 import '../../services/mongodb_service.dart';
+import '../../widgets/loading_indicators/three_bounce.dart';
+import '../../widgets/qm_button.dart';
+import '../../widgets/text_field/floating_label.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -17,6 +21,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   List<Map<String, dynamic>> users = [];
   List<String?> collNames = [];
   bool _isResetting = false;
+  final TextEditingController _FloatingLabelCtrler = TextEditingController();
 
   @override
   void initState() {
@@ -270,6 +275,31 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            const Divider(),
+            FloatingLabelTextField(
+              label: 'Floating label',
+              controller: _FloatingLabelCtrler,
+            ),
+            const Divider(),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const ClockScreen()),
+                );
+              },
+              child: const Text('Go to Clock Screen'),
+            ),
+            QMButton(
+              text: 'My Button',
+              onPressed: () {
+                print("My Button");
+              },
+            ),
+            // const Divider(),
+            // Container(
+            //     height: 60, decoration: const BoxDecoration(color: Colors.lightBlueAccent), child: const ThreeBounce()),
+            const Divider(),
             ElevatedButton(onPressed: _testSyncData, child: const Text('Sync data from MongoDB to SQLite')),
             ElevatedButton(onPressed: _testSQliteGetAllTableNames, child: const Text('SQLite: Get All Table Names')),
             ElevatedButton(onPressed: _testSQliteGetAllRoles, child: const Text('SQLite: Get All Roles')),
