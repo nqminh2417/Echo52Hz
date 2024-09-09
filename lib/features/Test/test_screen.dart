@@ -271,55 +271,57 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
           'Test Screen',
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Divider(),
-            FloatingLabelTextField(
-              label: 'Floating label',
-              controller: _FloatingLabelCtrler,
-            ),
-            const Divider(),
-            ElevatedButton(
-              onPressed: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const ClockScreen()),
-                );
-              },
-              child: const Text('Go to Clock Screen'),
-            ),
-            QMButton(
-              text: 'My Button',
-              onPressed: () {
-                print("My Button");
-              },
-            ),
-            // const Divider(),
-            // Container(
-            //     height: 60, decoration: const BoxDecoration(color: Colors.lightBlueAccent), child: const ThreeBounce()),
-            const Divider(),
-            ElevatedButton(onPressed: _testSyncData, child: const Text('Sync data from MongoDB to SQLite')),
-            ElevatedButton(onPressed: _testSQliteGetAllTableNames, child: const Text('SQLite: Get All Table Names')),
-            ElevatedButton(onPressed: _testSQliteGetAllRoles, child: const Text('SQLite: Get All Roles')),
-            ElevatedButton(
-                onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_cd Or _id')),
-            ElevatedButton(onPressed: _testSQliteInsertRole, child: const Text('SQLite: Insert Role')),
-            ElevatedButton(onPressed: _testSQLiteUpdateRole, child: const Text('SQLite: Update Role')),
-            ElevatedButton(
-                onPressed: _isResetting ? null : _testSQliteResetDB,
-                child: Text(_isResetting ? 'Resetting...' : 'SQLite: Reset Database')),
-            Visibility(
-              visible: _isResetting,
-              child: const CircularProgressIndicator(),
-            ),
-            const Divider(),
-            ElevatedButton(onPressed: _testGetAllRoles, child: const Text('Get All Roles')),
-            ElevatedButton(onPressed: _testGetRole, child: const Text('Get Role')),
-            ElevatedButton(onPressed: _testInsertRole, child: const Text('Insert Role')),
-            ElevatedButton(onPressed: _testUpdateRole, child: const Text('Update Role')),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Divider(),
+              FloatingLabelTextField(
+                label: 'Floating label',
+                controller: _FloatingLabelCtrler,
+              ),
+              const Divider(),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ClockScreen()),
+                  );
+                },
+                child: const Text('Go to Clock Screen'),
+              ),
+              QMButton(
+                text: 'My Button',
+                onPressed: () {
+                  print("My Button");
+                },
+              ),
+              // const Divider(),
+              // Container(
+              //     height: 60, decoration: const BoxDecoration(color: Colors.lightBlueAccent), child: const ThreeBounce()),
+              const Divider(),
+              ElevatedButton(onPressed: _testSyncData, child: const Text('Sync data from MongoDB to SQLite')),
+              ElevatedButton(onPressed: _testSQliteGetAllTableNames, child: const Text('SQLite: Get All Table Names')),
+              ElevatedButton(onPressed: _testSQliteGetAllRoles, child: const Text('SQLite: Get All Roles')),
+              ElevatedButton(
+                  onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_cd Or _id')),
+              ElevatedButton(onPressed: _testSQliteInsertRole, child: const Text('SQLite: Insert Role')),
+              ElevatedButton(onPressed: _testSQLiteUpdateRole, child: const Text('SQLite: Update Role')),
+              ElevatedButton(
+                  onPressed: _isResetting ? null : _testSQliteResetDB,
+                  child: Text(_isResetting ? 'Resetting...' : 'SQLite: Reset Database')),
+              Visibility(
+                visible: _isResetting,
+                child: const CircularProgressIndicator(),
+              ),
+              const Divider(),
+              ElevatedButton(onPressed: _testGetAllRoles, child: const Text('Get All Roles')),
+              ElevatedButton(onPressed: _testGetRole, child: const Text('Get Role')),
+              ElevatedButton(onPressed: _testInsertRole, child: const Text('Insert Role')),
+              ElevatedButton(onPressed: _testUpdateRole, child: const Text('Update Role')),
+            ],
+          ),
         ),
       ),
     );
