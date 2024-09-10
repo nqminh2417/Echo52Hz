@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../Test/test_screen.dart';
 import '../authentication/login_screen.dart';
 import '../data_sync/data_sync_screen.dart';
+import '../the_movie_database/tmdb_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -69,6 +70,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   barrierDismissible: false,
                   builder: (context) => const DataSyncModal(),
                 );
+              },
+            ),
+            const Divider(),
+            ListTile(
+              leading: const Text('5'),
+              title: const Text('The Movie Database'),
+              trailing: const Icon(Icons.movie),
+              onTap: () {
+                Navigator.pushNamed(context, '/tmdb');
               },
             ),
             const Divider(),
