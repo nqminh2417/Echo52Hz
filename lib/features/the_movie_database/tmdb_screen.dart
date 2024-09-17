@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../webview/webview_screen.dart';
 import 'tmdb_service.dart';
 
 /// The Movie Database
@@ -29,7 +30,7 @@ class _TmdbScreenState extends State<TmdbScreen> {
       _apiKeySaved = apiKey.isNotEmpty;
       _savedApiKey = apiKey;
       if (_apiKeySaved) {
-        _fetchTrendingMovies();
+        // _fetchTrendingMovies();
       }
     });
   }
@@ -61,6 +62,21 @@ class _TmdbScreenState extends State<TmdbScreen> {
               decoration: const InputDecoration(hintText: 'Enter API Key'),
             ),
             const SizedBox(height: 16),
+            TextButton(
+              // New TextButton for receiving API key
+              onPressed: () async {
+                // Implement logic to handle receiving API key
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const WebviewScreen(url: 'https://www.themoviedb.org/')),
+                );
+                // (e.g., navigate to a separate screen or show a success message)
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('API Key Received!')),
+                );
+              },
+              child: const Text('Receive', style: TextStyle(color: Colors.blue)), // Set color to blue
+            ),
           ],
         ),
         actions: [
@@ -102,6 +118,18 @@ class _TmdbScreenState extends State<TmdbScreen> {
             'The Movie Database',
           ),
           actions: [
+            IconButton(
+              icon: const Icon(
+                Icons.travel_explore,
+                color: Colors.blueAccent,
+              ),
+              onPressed: () => {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const WebviewScreen(url: 'https://www.themoviedb.org/')),
+                )
+              },
+            ),
             IconButton(
               icon: Icon(
                 Icons.token,
