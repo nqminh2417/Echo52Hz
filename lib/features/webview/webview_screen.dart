@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
+import '../../utils/string_utils.dart';
+
 class WebviewScreen extends StatefulWidget {
   final String url;
   const WebviewScreen({super.key, required this.url});
@@ -36,8 +38,8 @@ class _WebviewScreenState extends State<WebviewScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           // final value = await _getValueFromJavascript();
-          // print('Value from JavaScript: $value');
-          print('Value from JavaScript');
+          // StringUtils.debugLog('Value from JavaScript: $value');
+          StringUtils.debugLog('Value from JavaScript');
         },
         child: const Icon(Icons.get_app),
       ),

@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:device_info_plus/device_info_plus.dart';
 import 'package:flutter/material.dart';
 
+import '../../utils/string_utils.dart';
+
 class DeviceInfoScreen extends StatefulWidget {
   const DeviceInfoScreen({super.key});
 
@@ -26,14 +28,14 @@ class _DeviceInfoScreenState extends State<DeviceInfoScreen> {
     try {
       if (Platform.isAndroid) {
         androidInfo = await deviceInfo.androidInfo;
-        print(androidInfo!.display);
+        StringUtils.debugLog(androidInfo!.display);
         // final a = androidInfo!.fingerprint;
       } else if (Platform.isIOS) {
         iosInfo = await deviceInfo.iosInfo;
       }
       setState(() {});
     } catch (e) {
-      print('Failed to get device info: $e');
+      StringUtils.debugLog('Failed to get device info: $e');
     }
   }
 

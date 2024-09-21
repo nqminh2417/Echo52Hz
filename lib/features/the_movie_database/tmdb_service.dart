@@ -3,6 +3,8 @@ import 'dart:convert';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:http/http.dart' as http;
 
+import '../../utils/string_utils.dart';
+
 class TmdbService {
   static const _apiKeyKey = 'TMDB_API_KEY';
   static const _apiReadAccessTokenKey = 'TMDB_API_READ_ACCESS_TOKEN';
@@ -40,7 +42,7 @@ class TmdbService {
       final List<dynamic> movies = data['results'];
       return movies;
     } else {
-      print('Error fetching trending movies: ${response.statusCode}');
+      StringUtils.debugLog('Error fetching trending movies: ${response.statusCode}');
       return [];
     }
   }

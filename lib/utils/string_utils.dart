@@ -1,4 +1,12 @@
+import 'package:flutter/foundation.dart';
+
 class StringUtils {
+  static void debugLog(Object? object) {
+    if (kDebugMode) {
+      debugPrint(object.toString());
+    }
+  }
+
   static String capitalizeFirstLetter(String text) {
     // Capitalize the first letter of the text
     if (text.isEmpty) {

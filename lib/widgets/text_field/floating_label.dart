@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/string_utils.dart';
+
 class FloatingLabelTextField extends StatefulWidget {
   final String label;
   final TextEditingController controller;
@@ -71,7 +73,7 @@ class _FloatingLabelTextFieldState extends State<FloatingLabelTextField> {
       ),
       readOnly: widget.readOnly,
       onTapOutside: (event) {
-        print("Press outside");
+        StringUtils.debugLog("Press outside");
         setState(() {
           FocusScope.of(context).requestFocus(FocusNode());
         });
