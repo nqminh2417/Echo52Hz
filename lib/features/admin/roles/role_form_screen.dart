@@ -34,7 +34,7 @@ class _RoleFormScreenState extends State<RoleFormScreen> {
     final role = await SQLiteService.getRoleByCdOrId(roleId);
     setState(() {
       _role = role;
-      _codeController.text = role!.roleCd;
+      _codeController.text = role!.roleCode;
       _nameController.text = role.roleName;
       _descriptionController.text = role.description!;
       _createByController.text = role.createdBy!;
@@ -46,7 +46,7 @@ class _RoleFormScreenState extends State<RoleFormScreen> {
     if (_role == null) {
       // Add a new role
       final newRole = Role(
-        roleCd: _codeController.text,
+        roleCode: _codeController.text,
         roleName: _nameController.text,
         description: _descriptionController.text,
         createdBy: _createByController.text,
@@ -60,7 +60,7 @@ class _RoleFormScreenState extends State<RoleFormScreen> {
       // Update the existing role
       final updatedRole = Role(
         id: _role?.id,
-        roleCd: (_codeController.text != _role!.roleCd) ? _codeController.text : _role!.roleCd,
+        roleCode: (_codeController.text != _role!.roleCode) ? _codeController.text : _role!.roleCode,
         roleName: _nameController.text != _role!.roleName ? _nameController.text : _role!.roleName,
         description: _descriptionController.text != _role?.description ? _descriptionController.text : null,
         updatedBy: "Minh",

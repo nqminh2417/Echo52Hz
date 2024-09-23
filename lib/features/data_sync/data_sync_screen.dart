@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../utils/string_utils.dart';
 import 'data_sync_service.dart';
 
 class DataSyncModal extends StatefulWidget {
@@ -36,7 +37,7 @@ class _DataSyncModalState extends State<DataSyncModal> {
         _isSyncing = false;
         _syncStatus = 'Error: $e';
       });
-      print('Error: $e');
+      StringUtils.debugLog('Error: $e');
     }
   }
 

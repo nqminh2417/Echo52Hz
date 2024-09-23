@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../utils/string_utils.dart';
+
 class SQLiteHelper {
   static const _databaseName = 'echo.db';
   static const _databaseVersion = 1;
@@ -30,7 +32,7 @@ class SQLiteHelper {
         return await openDatabase(path, version: _databaseVersion, onCreate: _onCreate);
       }
     } catch (e) {
-      print('Error opening database: $e');
+      StringUtils.debugLog('Error opening database: $e');
       rethrow; // or handle the error appropriately
     }
   }
@@ -38,16 +40,39 @@ class SQLiteHelper {
   static Future<void> _onCreate(Database db, int version) async {
     // Create tables and initial data here
     await db.execute('''
-      CREATE TABLE IF NOT EXISTS roles (
+      CREATE TABLE IF NOT EXISTS ROLES (
         _id TEXT,
-        role_cd TEXT PRIMARY KEY UNIQUE,
-        role_nm TEXT,
-        descr TEXT,
-        crt_by TEXT,
-        crt_dt TEXT,
-        upd_by TEXT,
-        upd_dt TEXT,
+        role_code TEXT PRIMARY KEY UNIQUE,
+        role_name TEXT,
+        description TEXT,
+        created_by TEXT,
+        created_at TEXT,
+        updated_by TEXT,
+        updated_at TEXT,
         permissions TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS MENU_SETS (
+        _id TEXT PRIMARY KEY,
+        role_code TEXT,
+        menu_items TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE IF NOT EXISTS MENU_ITEMS (
+        _id TEXT PRIMARY KEY,
+        menu_name TEXT,
+        route TEXT,
+        icon TEXT,
+        parent_id TEXT,
+        is_active INTEGER,
+        created_by TEXT,
+        created_at TEXT,
+        updated_by TEXT,
+        updated_at TEXT
       )
     ''');
   }
@@ -71,7 +96,7 @@ class SQLiteHelper {
     try {
       await deleteDatabase(path);
     } catch (e) {
-      print('Error deleting database: $e');
+      StringUtils.debugLog('Error deleting database: $e');
       rethrow; // or handle the error appropriately
     }
   }

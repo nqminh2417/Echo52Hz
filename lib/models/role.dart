@@ -8,7 +8,7 @@ import '../utils/datetime_utils.dart';
 
 class Role {
   final String? id;
-  final String roleCd;
+  final String roleCode;
   final String roleName;
   final String? description;
   final String? createdBy;
@@ -18,7 +18,7 @@ class Role {
   final List<String>? permissions;
   Role({
     this.id,
-    required this.roleCd,
+    required this.roleCode,
     required this.roleName,
     this.description,
     this.createdBy,
@@ -30,7 +30,7 @@ class Role {
 
   Role copyWith({
     String? id,
-    String? roleCd,
+    String? roleCode,
     String? roleName,
     String? description,
     String? createdBy,
@@ -41,7 +41,7 @@ class Role {
   }) {
     return Role(
       id: id ?? this.id,
-      roleCd: roleCd ?? this.roleCd,
+      roleCode: roleCode ?? this.roleCode,
       roleName: roleName ?? this.roleName,
       description: description ?? this.description,
       createdBy: createdBy ?? this.createdBy,
@@ -56,13 +56,13 @@ class Role {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       '_id': id,
-      'role_cd': roleCd,
-      'role_nm': roleName,
-      'descr': description,
-      'crt_by': createdBy,
-      'crt_dt': createdAt,
-      'upd_by': updatedBy,
-      'upd_dt': updatedAt,
+      'role_code': roleCode,
+      'role_name': roleName,
+      'description': description,
+      'created_by': createdBy,
+      'updated_by': updatedBy,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
       'permissions': permissions ?? [],
     };
   }
@@ -71,13 +71,13 @@ class Role {
   Map<String, dynamic> toMapSqlite() {
     return <String, dynamic>{
       '_id': id,
-      'role_cd': roleCd,
-      'role_nm': roleName,
-      'descr': description,
-      'crt_by': createdBy,
-      'crt_dt': createdAt != null ? DateTimeUtils.dateTimeToString(createdAt!) : null,
-      'upd_by': updatedBy,
-      'upd_dt': updatedAt != null ? DateTimeUtils.dateTimeToString(updatedAt!) : null,
+      'role_code': roleCode,
+      'role_name': roleName,
+      'description': description,
+      'created_by': createdBy,
+      'updated_by': updatedBy,
+      'created_at': createdAt != null ? DateTimeUtils.dateTimeToString(createdAt!) : null,
+      'updated_at': updatedAt != null ? DateTimeUtils.dateTimeToString(updatedAt!) : null,
       'permissions': jsonEncode(permissions),
     };
   }
@@ -85,13 +85,13 @@ class Role {
   factory Role.fromMap(Map<String, dynamic> map) {
     return Role(
       id: map['_id'] is ObjectId ? map['_id'].toHexString() : map['_id'] ?? '',
-      roleCd: map['role_cd'] ?? '',
-      roleName: map['role_nm'] ?? '',
-      description: map['descr'] ?? '',
-      createdBy: map['crt_by'] ?? '',
-      createdAt: map['crt_dt'] is String ? _parseDate(map['crt_dt']) : map['crt_dt'],
-      updatedBy: map['upd_by'] ?? '',
-      updatedAt: map['upd_dt'] is String ? _parseDate(map['upd_dt']) : map['upd_dt'],
+      roleCode: map['role_code'] ?? '',
+      roleName: map['role_name'] ?? '',
+      description: map['description'] ?? '',
+      createdBy: map['created_by'] ?? '',
+      createdAt: map['created_at'] is String ? DateTimeUtils.parseDate(map['created_at']) : map['created_at'],
+      updatedBy: map['updated_by'] ?? '',
+      updatedAt: map['updated_at'] is String ? DateTimeUtils.parseDate(map['updated_at']) : map['updated_at'],
       permissions: map['permissions'] is String
           ? (jsonDecode(map['permissions']) as List<dynamic>).cast<String>()
           : (map['permissions'] as List<dynamic>).cast<String>(),
@@ -104,7 +104,7 @@ class Role {
 
   @override
   String toString() {
-    return 'Role(id: $id, roleCd: $roleCd, roleName: $roleName, description: $description, createdBy: $createdBy, createdAt: $createdAt, updatedBy: $updatedBy, updatedAt: $updatedAt, permissions: $permissions)';
+    return 'Role(id: $id, roleCode: $roleCode, roleName: $roleName, description: $description, createdBy: $createdBy, createdAt: $createdAt, updatedBy: $updatedBy, updatedAt: $updatedAt, permissions: $permissions)';
   }
 
   @override
@@ -112,7 +112,7 @@ class Role {
     if (identical(this, other)) return true;
 
     return other.id == id &&
-        other.roleCd == roleCd &&
+        other.roleCode == roleCode &&
         other.roleName == roleName &&
         other.description == description &&
         other.createdBy == createdBy &&
@@ -125,7 +125,7 @@ class Role {
   @override
   int get hashCode {
     return id.hashCode ^
-        roleCd.hashCode ^
+        roleCode.hashCode ^
         roleName.hashCode ^
         description.hashCode ^
         createdBy.hashCode ^
@@ -133,19 +133,5 @@ class Role {
         updatedBy.hashCode ^
         updatedAt.hashCode ^
         permissions.hashCode;
-  }
-
-  static DateTime? _parseDate(String? dateString) {
-    if (dateString == null || dateString.isEmpty) {
-      return null;
-    }
-
-    try {
-      return DateTimeUtils.stringToDateTime(dateString);
-    } catch (e) {
-      // Handle the error, e.g., log the error or throw a custom exception
-      print('Error parsing date: $e');
-      return null;
-    }
   }
 }

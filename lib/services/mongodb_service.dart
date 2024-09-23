@@ -1,7 +1,10 @@
 import 'package:mongo_dart/mongo_dart.dart';
 import '../../helpers/password_hasher.dart';
+import '../models/menu_item.dart';
+import '../models/menu_set.dart';
 import '../models/role.dart';
 import '../utils/constants.dart';
+import '../utils/string_utils.dart';
 
 class MongoDBService {
   // static const databaseName = 'core_db';
@@ -47,8 +50,8 @@ class MongoDBService {
       if (user != null) {
         // Verify password
         if (PasswordHasher.verifyPassword(password, user['pwd_hash'])) {
-          print("verify password");
-          print(user);
+          StringUtils.debugLog("verify password");
+          StringUtils.debugLog(user);
           return user;
         } else {
           // Incorrect password
@@ -69,7 +72,7 @@ class MongoDBService {
       final rolesData = await rolesCollection.find().toList();
       return rolesData.map((roleData) => Role.fromMap(roleData)).toList();
     } catch (e) {
-      print('Error getting all roles: $e');
+      StringUtils.debugLog('Error getting all roles: $e');
       rethrow;
     } finally {
       await close();
@@ -88,7 +91,7 @@ class MongoDBService {
       }
       return Role.fromMap(roleData);
     } catch (e) {
-      print('Error getting role: $e');
+      StringUtils.debugLog('Error getting role: $e');
       return null;
     } finally {
       await close();
@@ -102,9 +105,9 @@ class MongoDBService {
       final rolesCollection = db.collection('roles');
 
       // Check for existing role code
-      final existingRole = await rolesCollection.findOne({'role_cd': newRole.roleCd});
+      final existingRole = await rolesCollection.findOne({'role_code': newRole.roleCode});
       if (existingRole != null) {
-        throw Exception('Role with code "${newRole.roleCd}" already exists');
+        throw Exception('Role with code "${newRole.roleCode}" already exists');
       }
 
       final result = await rolesCollection.insertOne(newRole.toMap());
@@ -118,7 +121,7 @@ class MongoDBService {
       return Role.fromMap(insertedRole);
     } catch (e) {
       // Handle other errors
-      print('Error inserting role: $e');
+      StringUtils.debugLog('Error inserting role: $e');
       rethrow; // Rethrow to be caught in the calling code
     } finally {
       await close();
@@ -142,7 +145,7 @@ class MongoDBService {
           .updateOne({'_id': ObjectId.fromHexString(updatedRole.id.toString())}, {'\$set': updateData});
       return updateResult.isSuccess;
     } catch (e) {
-      print('Error updating role: $e');
+      StringUtils.debugLog('Error updating role: $e');
       return false;
     } finally {
       await close();
@@ -155,5 +158,39 @@ class MongoDBService {
     final coll = db.collection(collectionName);
     final results = await coll.find().toList();
     return results;
+  }
+
+  // * Menu Sets
+  static Future<List<MenuSet>> getMenuSets() async {
+    try {
+      await connect();
+      final db = _dbs[databaseName]!;
+      final menuSetsCollection = db.collection('menu_sets');
+
+      final menuSetsData = await menuSetsCollection.find().toList();
+      return menuSetsData.map((menu) => MenuSet.fromMap(menu)).toList();
+    } catch (e) {
+      StringUtils.debugLog('Error getting MenuSets list: $e');
+      return [];
+    } finally {
+      await close();
+    }
+  }
+
+  // * Menu Items
+  static Future<List<MenuItem>> getMenuItems() async {
+    try {
+      await connect();
+      final db = _dbs[databaseName]!;
+      final menuItemsCollection = db.collection('menu_items');
+
+      final menuItemsData = await menuItemsCollection.find().toList();
+      return menuItemsData.map((menu) => MenuItem.fromMap(menu)).toList();
+    } catch (e) {
+      StringUtils.debugLog('Error getting MenuItems list: $e');
+      return [];
+    } finally {
+      await close();
+    }
   }
 }

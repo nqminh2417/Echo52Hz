@@ -1,10 +1,16 @@
+import 'package:echo_52hz/features/clock/clock_screen.dart';
 import 'package:echo_52hz/helpers/sqlite_helper.dart';
 import 'package:echo_52hz/models/role.dart';
 import 'package:echo_52hz/services/sqlite_service.dart';
+import 'package:echo_52hz/utils/string_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 import '../../helpers/password_hasher.dart';
 import '../../services/mongodb_service.dart';
+import '../../widgets/loading_indicators/three_bounce.dart';
+import '../../widgets/qm_button.dart';
+import '../../widgets/text_field/floating_label.dart';
 
 class TestScreen extends StatefulWidget {
   const TestScreen({super.key});
@@ -17,6 +23,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   List<Map<String, dynamic>> users = [];
   List<String?> collNames = [];
   bool _isResetting = false;
+  final TextEditingController _FloatingLabelCtrler = TextEditingController();
 
   @override
   void initState() {
@@ -35,7 +42,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       });
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print(e);
+      StringUtils.debugLog(e);
     } finally {
       await MongoDBService.close();
     }
@@ -49,7 +56,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       });
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print(e);
+      StringUtils.debugLog(e);
     } finally {
       await MongoDBService.close();
     }
@@ -59,16 +66,16 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     try {
       // Hash the password
       final hashedPassword = await PasswordHasher.hashPassword("zxc.123456");
-      print('Hashed Password: $hashedPassword');
+      StringUtils.debugLog('Hashed Password: $hashedPassword');
       // Verify the password
       final isPasswordValid = PasswordHasher.verifyPassword("zxc.123456", hashedPassword);
-      print('Password Valid: $isPasswordValid');
+      StringUtils.debugLog('Password Valid: $isPasswordValid');
       // Verify a wrong password
       final isWrongPasswordValid = PasswordHasher.verifyPassword('wrongpassword', hashedPassword);
-      print('Wrong Password Valid: $isWrongPasswordValid');
+      StringUtils.debugLog('Wrong Password Valid: $isWrongPasswordValid');
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print(e);
+      StringUtils.debugLog(e);
     } finally {
       // await MongoDBService.close('core_db');
     }
@@ -77,11 +84,11 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   Future<void> _fetchData4() async {
     try {
       final aaa = await MongoDBService.loginUser('un123', 'zxc.123456');
-      print("4444");
-      print(aaa);
+      StringUtils.debugLog("4444");
+      StringUtils.debugLog(aaa);
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print(e);
+      StringUtils.debugLog(e);
     } finally {
       // await MongoDBService.close('core_db');
     }
@@ -90,28 +97,28 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   void _testGetAllRoles() async {
     try {
       final roles = await MongoDBService.getAllRoles();
-      print(roles);
+      StringUtils.debugLog(roles);
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print(e);
+      StringUtils.debugLog(e);
     }
   }
 
   void _testGetRole() async {
     try {
       final role = await MongoDBService.getRole('66d02eab6cf648b00e000000');
-      print(role);
-      // print(role!.permissions![0]);
+      StringUtils.debugLog(role);
+      // StringUtils.debugLog(role!.permissions![0]);
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print(e);
+      StringUtils.debugLog(e);
     }
   }
 
   void _testInsertRole() async {
     try {
       Role roleData = Role(
-        roleCd: "TEST-4",
+        roleCode: "TEST-4",
         roleName: "Role Test 4",
         description: "test lần 4",
         createdBy: "user123",
@@ -121,15 +128,15 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
         // permissions: ["view_users", "create_users", "edit_users", "delete_users"]
       );
 
-      print(DateTime.now());
+      StringUtils.debugLog(DateTime.now());
       final insertedRole = await MongoDBService.insertRole(roleData);
       if (insertedRole != null) {
         // Handle successful insertion
-        print('Role inserted successfully: ${insertedRole.toJson()}');
+        StringUtils.debugLog('Role inserted successfully: ${insertedRole.toJson()}');
       }
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print('Unexpected error: $e');
+      StringUtils.debugLog('Unexpected error: $e');
     }
   }
 
@@ -137,17 +144,17 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     try {
       // const roleId = '66b2e73ab03dd04f7f000000';
       // final roleData = {
-      //   "role_nm": "Role Test Update",
-      //   "descr": "test update 5",
-      //   "crt_by": "user123",
-      //   "crt_dt": DateTime.now(),
-      //   "upd_by": "user123",
-      //   "upd_dt": DateTime.now(),
+      //   "role_name": "Role Test Update",
+      //   "description": "test update 5",
+      //   "created_by": "user123",
+      //   "created_at": DateTime.now(),
+      //   "updated_by": "user123",
+      //   "updated_at": DateTime.now(),
       // };
 //----------------------------------------------------------------
       Role roleData = Role(
           id: "66ac76aec0030fec33cd058a",
-          roleCd: "BASIC",
+          roleCode: "BASIC",
           roleName: "Basic User",
           // description: "test update 6",
           createdBy: "Minh",
@@ -158,50 +165,66 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
       final success = await MongoDBService.updateRole(roleData);
       if (success) {
-        print('Role updated successfully');
+        StringUtils.debugLog('Role updated successfully');
       } else {
-        print('Failed to update role');
+        StringUtils.debugLog('Failed to update role');
       }
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print(e);
+      StringUtils.debugLog(e);
     }
   }
 
-  void _testSyncData() async {
-    // from MongoDB to SQLite
+  void _testGetAllMenuSets() async {
+    try {
+      final menuSets = await MongoDBService.getMenuSets();
+      StringUtils.debugLog(menuSets);
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      StringUtils.debugLog(e);
+    }
+  }
+
+  void _testGetAllMenuItems() async {
+    try {
+      final menuItems = await MongoDBService.getMenuItems();
+      StringUtils.debugLog(menuItems);
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      StringUtils.debugLog(e);
+    }
   }
 
   void _testSQliteGetAllTableNames() async {
     final tables = await SQLiteService.getAllTableNames();
-    print(tables);
+    StringUtils.debugLog(tables);
   }
 
   void _testSQliteGetAllRoles() async {
     final roles = await SQLiteService.getAllRoles();
     final count = roles.length;
-    print('Count: $count');
-    print(roles);
+    StringUtils.debugLog('Count: $count');
+    StringUtils.debugLog(roles);
   }
 
   void _testSQliteGetRoleByCdOrId() async {
     final role = await SQLiteService.getRoleByCdOrId('66d02eab6cf648b00e000000');
-    print(role);
+    StringUtils.debugLog(role);
   }
 
   void _testSQliteInsertRole() async {
     final isInserted = await SQLiteService.insertRole(Role(
         id: "gbggbgbgbgb",
-        roleCd: "TEST",
+        roleCode: "TEST",
         roleName: "Role Test Update",
         description: "test update 5",
         createdAt: DateTime.now()));
     if (isInserted) {
       // Handle successful insertion
-      print("Inserted role");
+      StringUtils.debugLog("Inserted role");
     } else {
-      // Handle duplicate role_cd error
-      print("Duplicate role");
+      // Handle duplicate role_code error
+      StringUtils.debugLog("Duplicate role");
     }
   }
 
@@ -210,30 +233,30 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     try {
       const roleId = '66b2e73ab03dd04f7f000000';
       // final roleData = {
-      //   "role_nm": "Role Test Update",
-      //   "descr": "test update 1",
-      //   "crt_by": "user456",
-      //   "crt_dt": DateTime.now(),
-      //   "upd_by": "user123",
-      //   "upd_dt": DateTime.now(),
+      //   "role_name": "Role Test Update",
+      //   "description": "test update 1",
+      //   "created_by": "user456",
+      //   "created_at": DateTime.now(),
+      //   "updated_by": "user123",
+      //   "updated_at": DateTime.now(),
       // };
 
       Role roleToUpdate = Role(
           id: roleId,
-          roleCd: "TEST",
+          roleCode: "TEST",
           roleName: "Role Test Update",
           description: "test update 5",
           updatedAt: DateTime.now());
 
       final success = await SQLiteService.updateRole(roleToUpdate);
       if (success) {
-        print('Role updated successfully');
+        StringUtils.debugLog('Role updated successfully');
       } else {
-        print('Failed to update role');
+        StringUtils.debugLog('Failed to update role');
       }
     } catch (e) {
       // Handle errors, e.g., show an error message
-      print(e);
+      StringUtils.debugLog(e);
     }
   }
 
@@ -245,14 +268,34 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     try {
       await SQLiteHelper.resetDatabase();
       // Handle successful reset
-      print('Database reset successfully');
+      StringUtils.debugLog('Database reset successfully');
     } catch (e) {
       // Handle errors
-      print('Error resetting database: $e');
+      StringUtils.debugLog('Error resetting database: $e');
     } finally {
       setState(() {
         _isResetting = false;
       });
+    }
+  }
+
+  void _testSQLiteGetAllMenuSets() async {
+    try {
+      final menuSets = await SQLiteService.getMenuSets();
+      StringUtils.debugLog(menuSets);
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      StringUtils.debugLog(e);
+    }
+  }
+
+  void _testSQLiteGetAllMenuItems() async {
+    try {
+      final menuItems = await MongoDBService.getMenuItems();
+      StringUtils.debugLog(menuItems);
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      StringUtils.debugLog(e);
     }
   }
 
@@ -266,30 +309,62 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
           'Test Screen',
         ),
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(onPressed: _testSyncData, child: const Text('Sync data from MongoDB to SQLite')),
-            ElevatedButton(onPressed: _testSQliteGetAllTableNames, child: const Text('SQLite: Get All Table Names')),
-            ElevatedButton(onPressed: _testSQliteGetAllRoles, child: const Text('SQLite: Get All Roles')),
-            ElevatedButton(
-                onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_cd Or _id')),
-            ElevatedButton(onPressed: _testSQliteInsertRole, child: const Text('SQLite: Insert Role')),
-            ElevatedButton(onPressed: _testSQLiteUpdateRole, child: const Text('SQLite: Update Role')),
-            ElevatedButton(
-                onPressed: _isResetting ? null : _testSQliteResetDB,
-                child: Text(_isResetting ? 'Resetting...' : 'SQLite: Reset Database')),
-            Visibility(
-              visible: _isResetting,
-              child: const CircularProgressIndicator(),
-            ),
-            const Divider(),
-            ElevatedButton(onPressed: _testGetAllRoles, child: const Text('Get All Roles')),
-            ElevatedButton(onPressed: _testGetRole, child: const Text('Get Role')),
-            ElevatedButton(onPressed: _testInsertRole, child: const Text('Insert Role')),
-            ElevatedButton(onPressed: _testUpdateRole, child: const Text('Update Role')),
-          ],
+      body: SingleChildScrollView(
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Divider(),
+
+              const Divider(),
+              FloatingLabelTextField(
+                label: 'Floating label',
+                controller: _FloatingLabelCtrler,
+              ),
+              const Divider(),
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ClockScreen()),
+                  );
+                },
+                child: const Text('Go to Clock Screen'),
+              ),
+              QMButton(
+                text: 'My Button',
+                onPressed: () {
+                  StringUtils.debugLog("My Button");
+                },
+              ),
+              // const Divider(),
+              // Container(
+              //     height: 60, decoration: const BoxDecoration(color: Colors.lightBlueAccent), child: const ThreeBounce()),
+              const Divider(),
+              ElevatedButton(onPressed: _testSQLiteGetAllMenuSets, child: const Text('SQLite: Get all menu sets')),
+              ElevatedButton(onPressed: _testSQLiteGetAllMenuItems, child: const Text('SQLite: Get all menu items')),
+              ElevatedButton(onPressed: _testSQliteGetAllTableNames, child: const Text('SQLite: Get All Table Names')),
+              ElevatedButton(onPressed: _testSQliteGetAllRoles, child: const Text('SQLite: Get All Roles')),
+              ElevatedButton(
+                  onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_code Or _id')),
+              ElevatedButton(onPressed: _testSQliteInsertRole, child: const Text('SQLite: Insert Role')),
+              ElevatedButton(onPressed: _testSQLiteUpdateRole, child: const Text('SQLite: Update Role')),
+              ElevatedButton(
+                  onPressed: _isResetting ? null : _testSQliteResetDB,
+                  child: Text(_isResetting ? 'Resetting...' : 'SQLite: Reset Database')),
+              Visibility(
+                visible: _isResetting,
+                child: const CircularProgressIndicator(),
+              ),
+              const Divider(),
+              ElevatedButton(onPressed: _testGetAllMenuSets, child: const Text('Get all menu sets')),
+              ElevatedButton(onPressed: _testGetAllMenuItems, child: const Text('Get all menu items')),
+              ElevatedButton(onPressed: _testGetAllRoles, child: const Text('Get All Roles')),
+              ElevatedButton(onPressed: _testGetRole, child: const Text('Get Role')),
+              ElevatedButton(onPressed: _testInsertRole, child: const Text('Insert Role')),
+              ElevatedButton(onPressed: _testUpdateRole, child: const Text('Update Role')),
+            ],
+          ),
         ),
       ),
     );
