@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
+import '../../widgets/side_menu.dart';
 import '../Test/test_screen.dart';
 import '../authentication/login_screen.dart';
 import '../data_sync/data_sync_screen.dart';
@@ -31,6 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
           'Home Screen',
         ),
       ),
+      drawer: const SideMenu(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,

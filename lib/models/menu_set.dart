@@ -7,22 +7,22 @@ import 'package:mongo_dart/mongo_dart.dart';
 class MenuSet {
   final String id;
   final String? role_code;
-  final List<String>? menu_items;
+  final List<String>? mItems;
   MenuSet({
     required this.id,
     this.role_code,
-    this.menu_items,
+    this.mItems,
   });
 
   MenuSet copyWith({
     String? id,
     String? role_code,
-    List<String>? menu_items,
+    List<String>? mItems,
   }) {
     return MenuSet(
       id: id ?? this.id,
       role_code: role_code ?? this.role_code,
-      menu_items: menu_items ?? this.menu_items,
+      mItems: mItems ?? this.mItems,
     );
   }
 
@@ -31,7 +31,7 @@ class MenuSet {
     return <String, dynamic>{
       '_id': id,
       'role_code': role_code,
-      'menu_items': menu_items ?? [],
+      'm_items': mItems ?? [],
     };
   }
 
@@ -40,7 +40,7 @@ class MenuSet {
     return <String, dynamic>{
       '_id': id,
       'role_code': role_code,
-      'menu_items': jsonEncode(menu_items),
+      'm_items': jsonEncode(mItems),
     };
   }
 
@@ -48,9 +48,9 @@ class MenuSet {
     return MenuSet(
       id: map['_id'] is ObjectId ? map['_id'].toHexString() : map['_id'] ?? '',
       role_code: map['role_code'] ?? '',
-      menu_items: map['menu_items'] is String
-          ? (jsonDecode(map['menu_items']) as List<dynamic>).cast<String>()
-          : (map['menu_items'] as List<dynamic>).cast<String>(),
+      mItems: map['m_items'] is String
+          ? (jsonDecode(map['m_items']) as List<dynamic>).cast<String>()
+          : (map['m_items'] as List<dynamic>).cast<String>(),
     );
   }
 
@@ -59,15 +59,15 @@ class MenuSet {
   factory MenuSet.fromJson(String source) => MenuSet.fromMap(json.decode(source) as Map<String, dynamic>);
 
   @override
-  String toString() => 'MenuSet(id: $id, role_code: $role_code, menu_items: $menu_items)';
+  String toString() => 'MenuSet(id: $id, role_code: $role_code, m_items: $mItems)';
 
   @override
   bool operator ==(covariant MenuSet other) {
     if (identical(this, other)) return true;
 
-    return other.id == id && other.role_code == role_code && listEquals(other.menu_items, menu_items);
+    return other.id == id && other.role_code == role_code && listEquals(other.mItems, mItems);
   }
 
   @override
-  int get hashCode => id.hashCode ^ role_code.hashCode ^ menu_items.hashCode;
+  int get hashCode => id.hashCode ^ role_code.hashCode ^ mItems.hashCode;
 }
