@@ -279,6 +279,25 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     }
   }
 
+  void _testSQliteDeleteDB() async {
+    setState(() {
+      _isResetting = true;
+    });
+
+    try {
+      await SQLiteHelper.delDatabase();
+      // Handle successful reset
+      StringUtils.debugLog('Database delete successfully');
+    } catch (e) {
+      // Handle errors
+      StringUtils.debugLog('Error deleting database (2): $e');
+    } finally {
+      setState(() {
+        _isResetting = false;
+      });
+    }
+  }
+
   void _testSQLiteGetAllMenuSets() async {
     try {
       final menuSets = await SQLiteService.getMenuSets();
@@ -291,7 +310,17 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
 
   void _testSQLiteGetAllMenuItems() async {
     try {
-      final menuItems = await MongoDBService.getMenuItems();
+      final menuItems = await SQLiteService.getMenuItems();
+      StringUtils.debugLog(menuItems);
+    } catch (e) {
+      // Handle errors, e.g., show an error message
+      StringUtils.debugLog(e);
+    }
+  }
+
+  void _testSQLiteGetMenuItemsByRoleCode() async {
+    try {
+      final menuItems = await SQLiteService.getMenuItemsByRoleCode('ADMIN');
       StringUtils.debugLog(menuItems);
     } catch (e) {
       // Handle errors, e.g., show an error message
@@ -341,6 +370,8 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
               // Container(
               //     height: 60, decoration: const BoxDecoration(color: Colors.lightBlueAccent), child: const ThreeBounce()),
               const Divider(),
+              ElevatedButton(
+                  onPressed: _testSQLiteGetMenuItemsByRoleCode, child: const Text('SQLite: Get MenuItems By RoleCode')),
               ElevatedButton(onPressed: _testSQLiteGetAllMenuSets, child: const Text('SQLite: Get all menu sets')),
               ElevatedButton(onPressed: _testSQLiteGetAllMenuItems, child: const Text('SQLite: Get all menu items')),
               ElevatedButton(onPressed: _testSQliteGetAllTableNames, child: const Text('SQLite: Get All Table Names')),
@@ -349,6 +380,9 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
                   onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_code Or _id')),
               ElevatedButton(onPressed: _testSQliteInsertRole, child: const Text('SQLite: Insert Role')),
               ElevatedButton(onPressed: _testSQLiteUpdateRole, child: const Text('SQLite: Update Role')),
+              ElevatedButton(
+                  onPressed: _isResetting ? null : _testSQliteDeleteDB,
+                  child: Text(_isResetting ? 'Deleting...' : 'SQLite: Delete Database')),
               ElevatedButton(
                   onPressed: _isResetting ? null : _testSQliteResetDB,
                   child: Text(_isResetting ? 'Resetting...' : 'SQLite: Reset Database')),

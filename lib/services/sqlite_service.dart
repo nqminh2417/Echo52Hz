@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:sqflite/sqflite.dart';
 
 import '../helpers/sqlite_helper.dart';
@@ -236,5 +238,31 @@ class SQLiteService {
       StringUtils.debugLog('Error updating MENU_ITEMS: $e');
       return false; // Indicate update failure
     }
+  }
+
+  static Future<List<MenuItem>> getMenuItemsByRoleCode(String roleCode) async {
+    final db = await SQLiteHelper.database;
+
+    final msMaps = await db.query('MENU_SETS', where: 'role_code = ?', whereArgs: [roleCode]);
+
+    if (msMaps.isNotEmpty) {
+      final menuSet = msMaps.first;
+      final menuItemIds = jsonDecode(menuSet['m_items'].toString()) as List<dynamic>;
+      final whereClause = '_id IN (${menuItemIds.map((id) => '?').join(',')})';
+      final whereArgs = menuItemIds;
+
+      // Retrieve menu items based on the extracted IDs
+      final menuItemMaps = await db.query(
+        'MENU_ITEMS',
+        where: whereClause,
+        whereArgs: whereArgs,
+      );
+
+      return List.generate(menuItemMaps.length, (index) {
+        return MenuItem.fromMap(menuItemMaps[index]);
+      });
+    }
+
+    return []; // No menu set found
   }
 }

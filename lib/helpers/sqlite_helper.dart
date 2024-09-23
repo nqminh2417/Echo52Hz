@@ -3,10 +3,11 @@ import 'dart:io';
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
+import '../utils/constants.dart';
 import '../utils/string_utils.dart';
 
 class SQLiteHelper {
-  static const _databaseName = 'echo.db';
+  static const _databaseName = sqliteDatabaseName;
   static const _databaseVersion = 1;
 
   static Database? _database;
@@ -57,7 +58,7 @@ class SQLiteHelper {
       CREATE TABLE IF NOT EXISTS MENU_SETS (
         _id TEXT PRIMARY KEY,
         role_code TEXT,
-        menu_items TEXT
+        m_items TEXT
       )
     ''');
 
@@ -67,8 +68,10 @@ class SQLiteHelper {
         menu_name TEXT,
         route TEXT,
         icon TEXT,
+        is_parent INTEGER,
         parent_id TEXT,
         is_active INTEGER,
+        order_id INTEGER,
         created_by TEXT,
         created_at TEXT,
         updated_by TEXT,
@@ -96,7 +99,7 @@ class SQLiteHelper {
     try {
       await deleteDatabase(path);
     } catch (e) {
-      StringUtils.debugLog('Error deleting database: $e');
+      StringUtils.debugLog('Error deleting database (1): $e');
       rethrow; // or handle the error appropriately
     }
   }

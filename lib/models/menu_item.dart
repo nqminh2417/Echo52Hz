@@ -10,23 +10,29 @@ class MenuItem {
   final String? menuName;
   final String? route;
   final String? icon;
+  final bool? isParent;
   final String? parentId;
   final bool? isActive;
+  final int? orderId;
   final String? createdBy;
   final String? updatedBy;
   final DateTime? createdAt;
   final DateTime? updatedAt;
+  bool isExpanded;
   MenuItem({
     required this.id,
     this.menuName,
     this.route,
     this.icon,
+    this.isParent,
     this.parentId,
     this.isActive,
+    this.orderId,
     this.createdBy,
     this.updatedBy,
     this.createdAt,
     this.updatedAt,
+    this.isExpanded = true,
   });
 
   MenuItem copyWith({
@@ -34,8 +40,10 @@ class MenuItem {
     String? menuName,
     String? route,
     String? icon,
+    bool? isParent,
     String? parentId,
     bool? isActive,
+    int? orderId,
     String? createdBy,
     String? updatedBy,
     DateTime? createdAt,
@@ -46,8 +54,10 @@ class MenuItem {
       menuName: menuName ?? this.menuName,
       route: route ?? this.route,
       icon: icon ?? this.icon,
+      isParent: isParent ?? this.isParent,
       parentId: parentId ?? this.parentId,
       isActive: isActive ?? this.isActive,
+      orderId: orderId ?? this.orderId,
       createdBy: createdBy ?? this.createdBy,
       updatedBy: updatedBy ?? this.updatedBy,
       createdAt: createdAt ?? this.createdAt,
@@ -59,11 +69,13 @@ class MenuItem {
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
       '_id': id,
-      'menu_name': menuName,
+      'menuName': menuName,
       'route': route,
       'icon': icon,
+      'is_parent': isParent,
       'parent_id': parentId,
       'is_active': isActive,
+      'order_id': orderId,
       'created_by': createdBy,
       'updated_by': updatedBy,
       'created_at': createdAt,
@@ -78,8 +90,10 @@ class MenuItem {
       'menu_name': menuName,
       'route': route,
       'icon': icon,
+      'is_parent': isParent! ? 1 : 0,
       'parent_id': parentId,
       'is_active': isActive! ? 1 : 0,
+      'order_id': orderId,
       'created_by': createdBy,
       'updated_by': updatedBy,
       'created_at': createdAt != null ? DateTimeUtils.dateTimeToString(createdAt!) : null,
@@ -93,8 +107,10 @@ class MenuItem {
       menuName: map['menu_name'] ?? '',
       route: map['route'] ?? '',
       icon: map['icon'] ?? '',
+      isParent: map['is_parent'] is bool ? map['is_parent'] : ((map['is_parent'] as int) == 1 ? true : false),
       parentId: map['parent_id'] ?? '',
-      isActive: map['is_active'],
+      isActive: map['is_active'] is bool ? map['is_active'] : ((map['is_active'] as int) == 1 ? true : false),
+      orderId: map['order_id'] as int?,
       createdBy: map['created_by'] ?? '',
       updatedBy: map['updated_by'] ?? '',
       createdAt: map['created_at'] is String ? DateTimeUtils.parseDate(map['created_at']) : map['created_at'],
@@ -108,7 +124,7 @@ class MenuItem {
 
   @override
   String toString() {
-    return 'MenuItem(id: $id, menuName: $menuName, route: $route, icon: $icon, parentId: $parentId, isActive: $isActive, createdBy: $createdBy, updatedBy: $updatedBy, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'MenuItem(_id: $id, menuName: $menuName, route: $route, icon: $icon, isParent: $isParent, parentId: $parentId, isActive: $isActive, orderId: $orderId, createdBy: $createdBy, updatedBy: $updatedBy, createdAt: $createdAt, updatedAt: $updatedAt)';
   }
 
   @override
@@ -119,8 +135,10 @@ class MenuItem {
         other.menuName == menuName &&
         other.route == route &&
         other.icon == icon &&
+        other.isParent == isParent &&
         other.parentId == parentId &&
         other.isActive == isActive &&
+        other.orderId == orderId &&
         other.createdBy == createdBy &&
         other.updatedBy == updatedBy &&
         other.createdAt == createdAt &&
@@ -133,8 +151,10 @@ class MenuItem {
         menuName.hashCode ^
         route.hashCode ^
         icon.hashCode ^
+        isParent.hashCode ^
         parentId.hashCode ^
         isActive.hashCode ^
+        orderId.hashCode ^
         createdBy.hashCode ^
         updatedBy.hashCode ^
         createdAt.hashCode ^
