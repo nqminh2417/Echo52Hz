@@ -5,8 +5,12 @@ import 'package:echo_52hz/services/sqlite_service.dart';
 import 'package:echo_52hz/utils/string_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
+import '../../blocs/menu_bloc.dart';
 import '../../helpers/password_hasher.dart';
+import '../../providers/menu_provider.dart';
 import '../../services/mongodb_service.dart';
 import '../../widgets/loading_indicators/three_bounce.dart';
 import '../../widgets/qm_button.dart';
@@ -213,12 +217,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
   }
 
   void _testSQliteInsertRole() async {
-    final isInserted = await SQLiteService.insertRole(Role(
-        id: "gbggbgbgbgb",
-        roleCode: "TEST",
-        roleName: "Role Test Update",
-        description: "test update 5",
-        createdAt: DateTime.now()));
+    final isInserted = await SQLiteService.insertRole(Role(id: "gbggbgbgbgb", roleCode: "TEST", roleName: "Role Test Update", description: "test update 5", createdAt: DateTime.now()));
     if (isInserted) {
       // Handle successful insertion
       StringUtils.debugLog("Inserted role");
@@ -241,12 +240,7 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
       //   "updated_at": DateTime.now(),
       // };
 
-      Role roleToUpdate = Role(
-          id: roleId,
-          roleCode: "TEST",
-          roleName: "Role Test Update",
-          description: "test update 5",
-          updatedAt: DateTime.now());
+      Role roleToUpdate = Role(id: roleId, roleCode: "TEST", roleName: "Role Test Update", description: "test update 5", updatedAt: DateTime.now());
 
       final success = await SQLiteService.updateRole(roleToUpdate);
       if (success) {
@@ -318,10 +312,16 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
     }
   }
 
+  late MenuBloc menuBloc;
   void _testSQLiteGetMenuItemsByRoleCode() async {
     try {
-      final menuItems = await SQLiteService.getMenuItemsByRoleCode('ADMIN');
-      StringUtils.debugLog(menuItems);
+      // final menuItems = await SQLiteService.getMenuItemsByRoleCode('ADMIN');
+      // Provider.of<MenuProvider>(context, listen: false).setMenuItems(menuItems);
+      // StringUtils.debugLog(menuItems);
+
+      menuBloc = BlocProvider.of<MenuBloc>(context);
+      menuBloc.add(LoadMenuItemsEvent(roleCode: 'ADMIN'));
+      StringUtils.debugLog('Trigger the loading of menu items for "ADMIN"');
     } catch (e) {
       // Handle errors, e.g., show an error message
       StringUtils.debugLog(e);
@@ -370,22 +370,16 @@ class _TestScreenState extends State<TestScreen> with TickerProviderStateMixin {
               // Container(
               //     height: 60, decoration: const BoxDecoration(color: Colors.lightBlueAccent), child: const ThreeBounce()),
               const Divider(),
-              ElevatedButton(
-                  onPressed: _testSQLiteGetMenuItemsByRoleCode, child: const Text('SQLite: Get MenuItems By RoleCode')),
+              ElevatedButton(onPressed: _testSQLiteGetMenuItemsByRoleCode, child: const Text('SQLite: Get MenuItems By RoleCode')),
               ElevatedButton(onPressed: _testSQLiteGetAllMenuSets, child: const Text('SQLite: Get all menu sets')),
               ElevatedButton(onPressed: _testSQLiteGetAllMenuItems, child: const Text('SQLite: Get all menu items')),
               ElevatedButton(onPressed: _testSQliteGetAllTableNames, child: const Text('SQLite: Get All Table Names')),
               ElevatedButton(onPressed: _testSQliteGetAllRoles, child: const Text('SQLite: Get All Roles')),
-              ElevatedButton(
-                  onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_code Or _id')),
+              ElevatedButton(onPressed: _testSQliteGetRoleByCdOrId, child: const Text('SQLite: Get Role By role_code Or _id')),
               ElevatedButton(onPressed: _testSQliteInsertRole, child: const Text('SQLite: Insert Role')),
               ElevatedButton(onPressed: _testSQLiteUpdateRole, child: const Text('SQLite: Update Role')),
-              ElevatedButton(
-                  onPressed: _isResetting ? null : _testSQliteDeleteDB,
-                  child: Text(_isResetting ? 'Deleting...' : 'SQLite: Delete Database')),
-              ElevatedButton(
-                  onPressed: _isResetting ? null : _testSQliteResetDB,
-                  child: Text(_isResetting ? 'Resetting...' : 'SQLite: Reset Database')),
+              ElevatedButton(onPressed: _isResetting ? null : _testSQliteDeleteDB, child: Text(_isResetting ? 'Deleting...' : 'SQLite: Delete Database')),
+              ElevatedButton(onPressed: _isResetting ? null : _testSQliteResetDB, child: Text(_isResetting ? 'Resetting...' : 'SQLite: Reset Database')),
               Visibility(
                 visible: _isResetting,
                 child: const CircularProgressIndicator(),
