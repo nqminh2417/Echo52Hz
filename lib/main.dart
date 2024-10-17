@@ -2,9 +2,11 @@ import 'package:echo_52hz/app_routes.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:provider/provider.dart';
 
 import 'blocs/menu_bloc.dart';
 import 'firebase_options.dart';
+import 'providers/menu_provider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -17,6 +19,9 @@ Future<void> main() async {
     providers: [
       BlocProvider<MenuBloc>(
         create: (BuildContext context) => MenuBloc(),
+      ),
+      ChangeNotifierProvider<MenuProvider>(
+        create: (BuildContext context) => MenuProvider(),
       ),
     ],
     child: const MainApp(),

@@ -19,6 +19,7 @@ class MenuItem {
   final DateTime? createdAt;
   final DateTime? updatedAt;
   bool isExpanded;
+
   MenuItem({
     required this.id,
     this.menuName,
