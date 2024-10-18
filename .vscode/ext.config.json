@@ -1,0 +1,15 @@
+{
+    "disabled": [
+        "vscjava.vscode-maven",
+        "vscjava.vscode-java-dependency",
+        "redhat.vscode-rsp-ui",
+        "vscjava.vscode-java-debug",
+        "redhat.vscode-community-server-connector",
+        "redhat.java",
+        "bradlc.vscode-tailwindcss",
+        "msjsdiag.vscode-react-native",
+        "dsznajder.es7-react-js-snippets"
+    ],
+    "autoReload": true,
+    "openInNewWindow": true
+}

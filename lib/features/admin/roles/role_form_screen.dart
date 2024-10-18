@@ -61,7 +61,7 @@ class _RoleFormScreenState extends State<RoleFormScreen> {
       final updatedRole = Role(
         id: _role?.id,
         roleCode: (_codeController.text != _role!.roleCode) ? _codeController.text : _role!.roleCode,
-        roleName: _nameController.text != _role!.roleName ? _nameController.text : _role!.roleName,
+        roleName: (_nameController.text != _role!.roleName) ? _nameController.text : _role!.roleName,
         description: _descriptionController.text != _role?.description ? _descriptionController.text : null,
         updatedBy: "Minh",
         updatedAt: DateTime.now(),

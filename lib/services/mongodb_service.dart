@@ -15,8 +15,7 @@ class MongoDBService {
       return; // Database already connected
     }
 
-    const connectionString =
-        'mongodb+srv://admin:zxc123@clusterflutter.vnmcr2s.mongodb.net/$databaseName?retryWrites=true&w=majority&appName=ClusterFlutter';
+    const connectionString = 'mongodb+srv://admin:zxc123@clusterflutter.vnmcr2s.mongodb.net/$databaseName?retryWrites=true&w=majority&appName=ClusterFlutter';
     final db = await Db.create(connectionString);
     await db.open();
     _dbs[databaseName] = db;
@@ -141,8 +140,7 @@ class MongoDBService {
         }
       });
 
-      final updateResult = await rolesCollection
-          .updateOne({'_id': ObjectId.fromHexString(updatedRole.id.toString())}, {'\$set': updateData});
+      final updateResult = await rolesCollection.updateOne({'_id': ObjectId.fromHexString(updatedRole.id.toString())}, {'\$set': updateData});
       return updateResult.isSuccess;
     } catch (e) {
       StringUtils.debugLog('Error updating role: $e');
@@ -189,6 +187,59 @@ class MongoDBService {
     } catch (e) {
       StringUtils.debugLog('Error getting MenuItems list: $e');
       return [];
+    } finally {
+      await close();
+    }
+  }
+
+  static Future<MenuItem?> insertMenuItem(MenuItem newMenuItem) async {
+    try {
+      await connect();
+      final db = _dbs[databaseName]!;
+      final menuItemsCollection = db.collection('menu_items');
+
+      // Check for existing menu item
+      final existingMenuItem = await menuItemsCollection.findOne({'menu_name': newMenuItem.menuName});
+      if (existingMenuItem != null) {
+        throw Exception('Role with code "${newMenuItem.menuName}" already exists');
+      }
+
+      final result = await menuItemsCollection.insertOne(newMenuItem.toMap());
+      final insertedId = result.id as ObjectId;
+      final insertedMenuItem = await menuItemsCollection.findOne({'_id': insertedId});
+
+      if (insertedMenuItem == null) {
+        throw Exception('Failed to insert menu item with id ${newMenuItem.menuName}');
+      }
+
+      return MenuItem.fromMap(insertedMenuItem);
+    } catch (e) {
+      // Handle other errors
+      StringUtils.debugLog('Error inserting role: $e');
+      rethrow; // Rethrow to be caught in the calling code
+    } finally {
+      await close();
+    }
+  }
+
+  static Future<bool> updateMenuItem(MenuItem updatedMenuItem) async {
+    try {
+      await connect();
+      final db = _dbs[databaseName]!;
+      final menuItemsCollection = db.collection('menu_items');
+
+      final Map<String, dynamic> updateData = {};
+      updatedMenuItem.toMap().forEach((key, value) {
+        if (key != '_id' && value != null) {
+          updateData[key] = value;
+        }
+      });
+
+      final updateResult = await menuItemsCollection.updateOne({'_id': ObjectId.fromHexString(updatedMenuItem.id.toString())}, {'\$set': updateData});
+      return updateResult.isSuccess;
+    } catch (e) {
+      StringUtils.debugLog('Error updating role: $e');
+      return false;
     } finally {
       await close();
     }

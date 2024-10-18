@@ -69,11 +69,11 @@ class _SideMenuState extends State<SideMenu> {
 
   Widget _MenuLevelOne(List<MenuItem> parentItems, List<MenuItem> childItems) {
     final expansionPanelItems = parentItems.map<ExpansionPanel>((item) {
-      final children = _MenuLevelTwo(item.id, childItems);
+      final children = _MenuLevelTwo(item.id!, childItems);
       return ExpansionPanel(
         headerBuilder: (context, isExpanded) {
           return ListTile(
-            title: Text(item.menuName!),
+            title: Text(item.menuName),
             onTap: () {
               setState(() {
                 item.isExpanded = !item.isExpanded;
@@ -107,7 +107,7 @@ class _SideMenuState extends State<SideMenu> {
         children.add(
           ListTile(
             // leading: Icon(childItem.icon),
-            title: Text(childItem.menuName!),
+            title: Text(childItem.menuName),
             onTap: () {
               // Handle the onTap action
               // Navigator.popAndPushNamed(context, childItem.route);
