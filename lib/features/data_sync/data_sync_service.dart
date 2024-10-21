@@ -32,7 +32,7 @@ class DataSyncService {
     final mongoMenuItems = await MongoDBService.getMenuItems();
     // Insert or update menu_items in SQLite
     for (MenuItem mongoMenuItem in mongoMenuItems) {
-      final existingMenuItem = await SQLiteService.getMenuMenuItemById(mongoMenuItem.id);
+      final existingMenuItem = await SQLiteService.getMenuMenuItemById(mongoMenuItem.id!);
       if (existingMenuItem == null) {
         await SQLiteService.insertMenuItem(mongoMenuItem);
       } else {

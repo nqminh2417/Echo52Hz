@@ -6,8 +6,8 @@ import 'package:mongo_dart/mongo_dart.dart';
 import '../utils/datetime_utils.dart';
 
 class MenuItem {
-  final String id;
-  final String? menuName;
+  final String? id;
+  final String menuName;
   final String? route;
   final String? icon;
   final bool? isParent;
@@ -21,8 +21,8 @@ class MenuItem {
   bool isExpanded;
 
   MenuItem({
-    required this.id,
-    this.menuName,
+    this.id,
+    required this.menuName,
     this.route,
     this.icon,
     this.isParent,
@@ -91,9 +91,9 @@ class MenuItem {
       'menu_name': menuName,
       'route': route,
       'icon': icon,
-      'is_parent': isParent! ? 1 : 0,
+      'is_parent': (isParent == null) ? 0 : (isParent! ? 1 : 0),
       'parent_id': parentId,
-      'is_active': isActive! ? 1 : 0,
+      'is_active': (isActive == null) ? 1 : (isActive! ? 1 : 0),
       'order_id': orderId,
       'created_by': createdBy,
       'updated_by': updatedBy,

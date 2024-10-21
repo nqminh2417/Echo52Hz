@@ -37,10 +37,17 @@ class _HomeScreenState extends State<HomeScreen> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
-            const ListTile(
-              leading: Text('1'),
-              title: Text('Go to eIS'),
-              trailing: Icon(Icons.access_time),
+            ListTile(
+              leading: const Text('1'),
+              title: const Text('Sync Data'),
+              trailing: const Icon(Icons.sync),
+              onTap: () {
+                showDialog(
+                  context: context,
+                  barrierDismissible: false,
+                  builder: (context) => const DataSyncModal(),
+                );
+              },
             ),
             const Divider(),
             ListTile(
@@ -55,23 +62,20 @@ class _HomeScreenState extends State<HomeScreen> {
             const Divider(),
             ListTile(
               leading: const Text('3'),
-              title: const Text('Device Info'),
-              trailing: const Icon(Icons.perm_device_information),
+              title: const Text('Go to MenuItem Screen'),
+              trailing: const Icon(Icons.list),
               onTap: () {
-                Navigator.pushNamed(context, '/device-info');
+                // Navigator.pushNamedAndRemoveUntil(context, '/roles', (route) => false);
+                Navigator.pushNamed(context, '/menus');
               },
             ),
             const Divider(),
             ListTile(
               leading: const Text('4'),
-              title: const Text('Sync Data'),
-              trailing: const Icon(Icons.sync),
+              title: const Text('Device Info'),
+              trailing: const Icon(Icons.perm_device_information),
               onTap: () {
-                showDialog(
-                  context: context,
-                  barrierDismissible: false,
-                  builder: (context) => const DataSyncModal(),
-                );
+                Navigator.pushNamed(context, '/device-info');
               },
             ),
             const Divider(),
