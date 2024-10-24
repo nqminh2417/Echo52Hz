@@ -32,15 +32,19 @@ class _HomeScreenState extends State<HomeScreen> {
           'Home Screen',
         ),
       ),
-      drawer: const SideMenu(),
+      // drawer: const SideMenu(),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
+            const Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Text('Welcome to the Home Screen!'),
+            ),
             ListTile(
               leading: const Text('1'),
               title: const Text('Sync Data'),
-              trailing: const Icon(Icons.sync),
+              trailing: const Icon(Icons.chevron_right_outlined),
               onTap: () {
                 showDialog(
                   context: context,
@@ -49,46 +53,41 @@ class _HomeScreenState extends State<HomeScreen> {
                 );
               },
             ),
-            const Divider(),
             ListTile(
               leading: const Text('2'),
               title: const Text('Go to Role Screen'),
-              trailing: const Icon(Icons.list),
+              trailing: const Icon(Icons.chevron_right_outlined),
               onTap: () {
                 // Navigator.pushNamedAndRemoveUntil(context, '/roles', (route) => false);
                 Navigator.pushNamed(context, '/roles');
               },
             ),
-            const Divider(),
             ListTile(
               leading: const Text('3'),
               title: const Text('Go to MenuItem Screen'),
-              trailing: const Icon(Icons.list),
+              trailing: const Icon(Icons.chevron_right_outlined),
               onTap: () {
                 // Navigator.pushNamedAndRemoveUntil(context, '/roles', (route) => false);
                 Navigator.pushNamed(context, '/menus');
               },
             ),
-            const Divider(),
             ListTile(
               leading: const Text('4'),
               title: const Text('Device Info'),
-              trailing: const Icon(Icons.perm_device_information),
+              trailing: const Icon(Icons.chevron_right_outlined),
               onTap: () {
                 Navigator.pushNamed(context, '/device-info');
               },
             ),
-            const Divider(),
             ListTile(
               leading: const Text('5'),
               title: const Text('The Movie Database'),
-              trailing: const Icon(Icons.movie),
+              trailing: const Icon(Icons.chevron_right_outlined),
               onTap: () {
                 Navigator.pushNamed(context, '/tmdb');
               },
             ),
-            const Divider(),
-            const Text('Welcome to the Home Screen!'),
+            const Padding(padding: EdgeInsets.all(8)),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
