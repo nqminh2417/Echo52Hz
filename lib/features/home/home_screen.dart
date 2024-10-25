@@ -87,6 +87,14 @@ class _HomeScreenState extends State<HomeScreen> {
                 Navigator.pushNamed(context, '/tmdb');
               },
             ),
+            ListTile(
+              leading: const Text('6'),
+              title: const Text('Summertime Saga'),
+              trailing: const Icon(Icons.chevron_right_outlined),
+              onTap: () {
+                Navigator.pushNamed(context, '/smts');
+              },
+            ),
             const Padding(padding: EdgeInsets.all(8)),
             ElevatedButton(
               onPressed: () {
