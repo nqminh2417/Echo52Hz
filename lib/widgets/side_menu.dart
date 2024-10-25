@@ -61,7 +61,29 @@ class _SideMenuState extends State<SideMenu> {
               color: Colors.amber,
             ),
           ),
-          _MenuLevelOne(p_Items, c_Items),
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                _MenuLevelOne(p_Items, c_Items),
+                const Divider(),
+                ListTile(
+                  leading: const Icon(Icons.sync),
+                  title: const Text('Sync data'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const Icon(Icons.settings),
+                  title: const Text('Settings'),
+                  onTap: () {},
+                ),
+                ListTile(
+                  leading: const Icon(Icons.logout),
+                  title: const Text('Log out'),
+                  onTap: () {},
+                ),
+              ],
+            ),
+          ),
         ],
       )),
     );
