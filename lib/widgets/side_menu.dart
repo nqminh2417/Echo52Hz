@@ -2,12 +2,9 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:provider/provider.dart';
 
 import '../blocs/menu_bloc.dart';
 import '../models/menu_item.dart';
-import '../providers/menu_provider.dart';
-import '../utils/string_utils.dart';
 
 class SideMenu extends StatefulWidget {
   const SideMenu({super.key});
